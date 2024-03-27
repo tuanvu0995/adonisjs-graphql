@@ -1,0 +1,27 @@
+{
+  "name": "adonis-workspace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "pnpm --filter=adonisjs-server start",
+    "dev": "pnpm run watch & pnpm --filter=adonisjs-server dev ",
+    "ace": "pnpm --filter=adonisjs-server exec node ace",
+    "build:server": "pnpm --filter=adonisjs-server run build:server",
+    "watch": "pnpm -r watch",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "format": "pnpm -r run format",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

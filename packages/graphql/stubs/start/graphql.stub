@@ -1,0 +1,9 @@
+{{{
+  exports({ to: app.startPath('graphql.ts') })
+}}}
+
+import User from '#models/user'
+
+export default [
+    User
+]
