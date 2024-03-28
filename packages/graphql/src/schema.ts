@@ -1,19 +1,16 @@
 import {
-  GraphQLBoolean,
   GraphQLInputObjectType,
-  GraphQLInt,
-  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
-  GraphQLScalarType,
   GraphQLSchema,
   GraphQLString,
 } from 'graphql'
-import { HydratedProperty, inspect } from './inspect.js'
-import Metadata, { MetaKey } from './metadata.js'
 import { HttpContext } from '@adonisjs/core/http'
-import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from './types.js'
+import { ArgMetaOptions, PropertyMetaOptions, PropertyRelation, QueryMetaOptions } from './types.js'
 import { ApplicationService } from '@adonisjs/core/types'
+import { getInputType, getPropretyType } from './schema_helpers.js'
+import Metadata, { MetaKey } from './metadata.js'
+import { HydratedProperty, inspect } from './inspect.js'
 
 export default class Schema {
   static schema: any = {
@@ -22,9 +19,13 @@ export default class Schema {
     types: [],
   }
 
+  static getType(name: string) {
+    return this.schema.types.find((t: any) => t.name === name)
+  }
+
   static build(app: ApplicationService, definitions: any[]) {
     for (const definition of definitions) {
-      const type = this.buildType(definition)
+      const type = this.buildTypes(definition)
       if (type) {
         this.schema.types.push(type)
       }
@@ -72,85 +73,65 @@ export default class Schema {
     })
   }
 
-  private static getNamedType(name: string) {
-    return this.schema.types.find((t: any) => t.name === name)
+  protected static getGetOrCreateType(options: PropertyMetaOptions) {
+    const type = getPropretyType(options)
+    if (type) return type
+    const definition = options.type()
+    return this.buildTypes(definition)
   }
 
-  private static getInputType(arg: { type: () => any; name?: string; index?: number }) {
-    if (!arg) return null
-
-    const type = arg?.type()
-
-    const getType = (inputType: any) => {
-      if (type instanceof GraphQLScalarType) return type
-
-      switch (inputType.name) {
-        case 'String':
-          return GraphQLString
-        case 'Number':
-          return GraphQLInt
-        case 'Boolean':
-          return GraphQLBoolean
-        default:
-          return this.getNamedType(inputType.name)
-      }
-    }
-    return Array.isArray(type) ? type.map(getType) : getType(type)
-  }
-
-  private static getPropretyType(options: PropertyMetaOptions) {
-    const definedType = this.getInputType(options)
-    const isArray = Array.isArray(definedType)
-    const namedType = isArray ? definedType[0] : definedType
-    const finalType = isArray ? new GraphQLList(namedType) : namedType
-    return options.nullable ? finalType : new GraphQLNonNull(finalType)
-  }
-
-  private static buildType(definition: any) {
+  protected static buildTypes(definition: any) {
     const properties = inspect(definition).getProperties(MetaKey.Property)
-    if (properties.length === 0) return null
+    if (!Array.isArray(properties) || properties.length === 0) {
+      return null
+    }
 
-    // Build fields in the type
-    const fields = properties.reduce((acc: any, property: any) => {
-      const options: PropertyMetaOptions = property.get(MetaKey.Property)
+    const fields = () => {
+      return properties.reduce((acc: any, property: any) => {
+        const options: PropertyMetaOptions = property.get(MetaKey.Property)
+        const fieldType = this.getGetOrCreateType(options)
 
-      if (options.relation) {
-        const fieldType = this.getPropretyType(options)
-        acc[property.name] = {
-          type: fieldType,
-          resolve: async (parent: any, _args: any, _: HttpContext) => {
-            return await parent.related(property.name).query().orderBy('id', 'asc')
-          },
+        if (options.relation) {
+          acc[property.name] = {
+            type: fieldType,
+            resolve: async (parent: any, _args: any, _: HttpContext) => {
+              if (
+                [
+                  PropertyRelation.HasMany,
+                  PropertyRelation.ManyToMany,
+                  PropertyRelation.HasOne,
+                ].includes(options.relation!)
+              ) {
+                return await parent.related(property.name).query().orderBy('id', 'asc')
+              }
+              return await parent.related(property.name).query().first()
+            },
+          }
+          return acc
         }
 
+        if (options?.serializeAs !== undefined || options?.serializeAs !== null) {
+          acc[property.name] = {
+            type: fieldType,
+          }
+        }
         return acc
-      }
-
-      if (!options?.serializeAs === undefined || options?.serializeAs !== null) {
-        const fieldType = this.getPropretyType(options)
-        acc[property.name] = {
-          type: fieldType,
-        }
-      }
-      return acc
-    }, {})
+      }, {})
+    }
 
     const options = Metadata.for(definition).get(MetaKey.Definition)
-    if (options?.isInputType) {
-      return new GraphQLInputObjectType({
-        name: definition.name,
-        fields,
-      })
-    }
-    return new GraphQLObjectType({
+    const typeObject = {
       name: definition.name,
       fields,
-    })
+    }
+    return options?.isInputType
+      ? new GraphQLInputObjectType(typeObject)
+      : new GraphQLObjectType(typeObject)
   }
 
   private static buildQuery(
     app: ApplicationService,
-    queries: any[],
+    queries: HydratedProperty[],
     metaKey: MetaKey = MetaKey.Query
   ) {
     if (queries.length === 0) return null
@@ -159,7 +140,7 @@ export default class Schema {
 
       const queryArgs: ArgMetaOptions[] = query.get(MetaKey.ParamTypes) || []
       const args = queryArgs.reduce((acc2: any, arg: ArgMetaOptions) => {
-        const inputType = this.getInputType(arg)
+        const inputType = getInputType(arg)
         const paramType = inputType || GraphQLString
         acc2[arg.name] = {
           type: arg.nullable ? paramType : new GraphQLNonNull(paramType),
@@ -167,7 +148,7 @@ export default class Schema {
         return acc2
       }, {})
 
-      const outputType = this.getPropretyType(options)
+      const outputType = getPropretyType(options)
 
       acc[query.name] = {
         type: outputType,

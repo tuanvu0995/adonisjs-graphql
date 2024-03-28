@@ -28,7 +28,7 @@ export class GraphqlCore {
     const router = await this.app.container.make('router')
     router.post(this.options.graphqlPath, this.handleRequest.bind(this))
     if (this.options?.playground) {
-      this.logger.info('GraphQL Playground is enabled')
+      this.logger.info('[GraphQL] Playground is enabled')
       router.get(this.options.graphqlPath, this.handlePlayground.bind(this))
     }
 
@@ -38,13 +38,13 @@ export class GraphqlCore {
   async buildSchema() {
     const { default: definitions } = await import(this.app.startPath('graphql.js'))
     if (!definitions?.length) {
-      throw new Error('GraphQL definitions are missing')
+      throw new Error('[GraphQL] definitions are missing')
     }
     this.schema = Schema.build(this.app, definitions)
   }
 
   async ready() {
-    this.logger.info(`GraphQL server is up and running on path ${this.options.graphqlPath}`)
+    this.logger.info(`[GraphQL] server is up and running on path ${this.options.graphqlPath}`)
   }
 
   private async handleRequest(ctx: HttpContext) {
