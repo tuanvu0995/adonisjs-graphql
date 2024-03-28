@@ -2,6 +2,7 @@ import {
   GraphQLBoolean,
   GraphQLInt,
   GraphQLList,
+  GraphQLNamedType,
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLString,
@@ -9,7 +10,9 @@ import {
 import { PropertyMetaOptions } from './types.js'
 import Schema from './schema.js'
 
-export function getInputType(arg: { type: () => any }) {
+export function getInputType(arg: {
+  type: () => any
+}): GraphQLNamedType | GraphQLNamedType[] | undefined | [] {
   const getType = (inputType: any) => {
     if (inputType instanceof GraphQLScalarType) return inputType
 
@@ -24,16 +27,23 @@ export function getInputType(arg: { type: () => any }) {
         return Schema.getType(inputType.name)
     }
   }
-  const type = arg.type()
-  return Array.isArray(type) ? type.map(getType) : getType(type)
+  const type = arg.type() as any | any[]
+
+  if (Array.isArray(type)) {
+    return type.map(getType).filter((t) => typeof t !== 'undefined') as any
+  }
+  return getType(type)
 }
 
 export function getPropretyType(options: PropertyMetaOptions) {
   const definedType = getInputType(options)
-  if (!definedType) return null
-  const isArray = Array.isArray(definedType)
-  const namedType = isArray ? definedType[0] : definedType
+  const isListType = Array.isArray(definedType)
+  if (!definedType || (isListType && !definedType[0])) {
+    return null
+  }
+
+  const namedType = isListType ? new GraphQLList(definedType[0]) : definedType
   if (!namedType) return null
-  const finalType = isArray ? new GraphQLList(namedType) : namedType
-  return options.nullable ? finalType : new GraphQLNonNull(finalType)
+
+  return options.nullable ? namedType : new GraphQLNonNull(namedType)
 }

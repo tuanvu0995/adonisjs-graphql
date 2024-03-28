@@ -1,15 +1,8 @@
-import {
-  GraphQLInputObjectType,
-  GraphQLNamedType,
-  GraphQLNonNull,
-  GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
-} from 'graphql'
+import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { HttpContext } from '@adonisjs/core/http'
 import { ArgMetaOptions, PropertyMetaOptions, PropertyRelation, QueryMetaOptions } from './types.js'
 import { ApplicationService } from '@adonisjs/core/types'
-import { getInputType, getPropretyType } from './schema_helpers.js'
+import { getPropretyType } from './schema_helpers.js'
 import Metadata, { MetaKey } from './metadata.js'
 import { HydratedProperty, inspect } from './inspect.js'
 
@@ -57,17 +50,17 @@ export default class Schema {
 
   private static buildSchema(schema: any) {
     return new GraphQLSchema({
-      query: schema.query && new GraphQLObjectType({ name: 'QueryType', fields: schema.query }),
+      query: schema.query && new GraphQLObjectType({ name: 'Query', fields: schema.query }),
       mutation:
         schema.mutation &&
         new GraphQLObjectType({
-          name: 'MutationType',
+          name: 'Mutation',
           fields: schema.mutation,
         }),
       subscription:
         schema.subscription &&
         new GraphQLObjectType({
-          name: 'SubscriptionType',
+          name: 'Subscription',
           fields: schema.subscription,
         }),
       types: schema.types,
@@ -98,6 +91,8 @@ export default class Schema {
         if (options.relation) {
           acc[property.name] = {
             type: fieldType,
+            description: options.description,
+            deprecationReason: options.deprecationReason,
             resolve: async (parent: any, _args: any, _: HttpContext) => {
               if (
                 [
@@ -118,6 +113,8 @@ export default class Schema {
         if (options?.serializeAs !== undefined || options?.serializeAs !== null) {
           acc[property.name] = {
             type: fieldType,
+            description: options.description,
+            deprecationReason: options.deprecationReason,
           }
         }
 
@@ -126,7 +123,11 @@ export default class Schema {
     }
 
     const options = Metadata.for(definition).get(MetaKey.Definition)
-    const typeOptions = { name: definition.name, fields }
+    const typeOptions = {
+      name: definition.name,
+      fields,
+      description: options?.description,
+    }
     return options?.isInputType
       ? new GraphQLInputObjectType(typeOptions)
       : new GraphQLObjectType(typeOptions)

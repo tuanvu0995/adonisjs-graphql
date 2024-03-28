@@ -1,16 +1,36 @@
+export type TargetClass = any
+export type MetaValue = any
+
+export enum PropertyRelation {
+  HasOne = 'hasOne',
+  HasMany = 'hasMany',
+  BelongsTo = 'belongsTo',
+  ManyToMany = 'manyToMany',
+}
+
+/**
+ * GraphQL types
+ */
+export type GraphQLConfig = {
+  graphqlPath: string
+  playground: boolean
+}
+
+/**
+ * Metadata types
+ */
+
 export type CommonMetaOptions = {
   name: string
+  description?: string
+  deprecationReason?: string
   type: () => any
 }
 
 export type PropertyMetaOptions = CommonMetaOptions & {
   nullable?: boolean
-  serializeAs?: any
+  serializeAs?: string | null
   relation?: PropertyRelation
-}
-
-export type QueryOptions = CommonMetaOptions & {
-  args?: any
 }
 
 export type QueryMetaOptions = CommonMetaOptions & {
@@ -22,20 +42,4 @@ export type ArgMetaOptions = CommonMetaOptions & {
   index: number
   nullable?: boolean
   defaultValue?: any
-}
-
-export enum PropertyRelation {
-  HasOne = 'hasOne',
-  HasMany = 'hasMany',
-  BelongsTo = 'belongsTo',
-  ManyToMany = 'manyToMany',
-  HasManyThrough = 'hasManyThrough',
-}
-
-/**
- * GraphQL types
- */
-export type GraphQLConfig = {
-  graphqlPath: string
-  playground: boolean
 }

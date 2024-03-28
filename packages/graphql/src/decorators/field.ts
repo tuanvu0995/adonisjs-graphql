@@ -5,9 +5,11 @@ import * as utils from '../utils.js'
 export type FieldOptions = {
   type?: () => any
   nullable?: boolean
+  description?: string
+  deprecationReason?: string
 }
 
-export function Field(options: FieldOptions = {}): PropertyDecorator & MethodDecorator {
+export function Field(options?: FieldOptions): PropertyDecorator & MethodDecorator {
   const defaultOptions: FieldOptions = {
     type: () => GraphQLString,
     nullable: false,

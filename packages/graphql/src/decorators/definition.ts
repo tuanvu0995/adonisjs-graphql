@@ -1,20 +1,47 @@
 import Metadata, { MetaKey } from '../metadata.js'
+import { TargetClass } from '../types.js'
 
 export type DefinitionOptions = {
-  modelOptions?: any
   isInputType?: boolean
+  isArgType?: boolean
+  description?: string
 }
 
 export type Definition = new (...args: any[]) => any
 
-export function Definition(options: DefinitionOptions = {}): ClassDecorator {
-  return (target: any) => {
+/**
+ * @summary Decorator for defining a class as a GraphQL type
+ * @param options - Options for the definition
+ * @returns
+ */
+export function Definition(options?: DefinitionOptions): ClassDecorator {
+  return (target: TargetClass) => {
     Metadata.for(target).set(MetaKey.Definition, options)
   }
 }
 
-export function InputType(): ClassDecorator {
+type InputTypeOptions = {
+  description?: string
+}
+/**
+ * @summary Decorator for defining a class as a GraphQL input type
+ * @param options - Options for the input type
+ */
+export function InputType(options?: InputTypeOptions): ClassDecorator {
   return (target: any) => {
-    Definition({ isInputType: true })(target)
+    Definition({ ...options, isInputType: true })(target)
+  }
+}
+
+type ArgTypeOptions = {
+  description?: string
+}
+/**
+ * @summary Decorator for defining a class as a GraphQL argument type
+ * @param options - Options for the argument type
+ */
+export function Args(options?: ArgTypeOptions): ClassDecorator {
+  return (target: any) => {
+    Definition({ ...options, isArgType: true })(target)
   }
 }

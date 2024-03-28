@@ -5,6 +5,12 @@ type ArgOptions = {
   defaultValue?: any
   type?: () => any
 }
+
+/**
+ * @summary Decorator for defining a GraphQL argument
+ * @param name - The name of the argument
+ * @param options - Options for the argument
+ */
 export function Arg(name: string, options?: ArgOptions) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     const paramTypes = Reflect.getOwnMetadata(MetaKey.ParamTypes, target, propertyKey)
@@ -20,6 +26,9 @@ export function Arg(name: string, options?: ArgOptions) {
   }
 }
 
+/**
+ * @summary Decorator for defining a GraphQL context argument
+ */
 export function Context() {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     Metadata.for(target).with(propertyKey).set(MetaKey.ParamTypes, {

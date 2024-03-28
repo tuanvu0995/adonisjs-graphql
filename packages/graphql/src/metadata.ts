@@ -1,7 +1,5 @@
+import { MetaValue, TargetClass } from './types.js'
 import * as util from './utils.js'
-
-type TargetClass = any
-type MetaValue = any
 
 const METADATA = Symbol('metadata')
 const DEFINITION = Symbol('definition')
