@@ -13,7 +13,7 @@ class InspectedDefinition {
   ): HydratedProperty[] {
     const result: HydratedProperty[] = []
     if (options?.isInput) {
-      for (const propertyName in Metadata.getDefinationProperties(this.definition)) {
+      for (const propertyName in Metadata.getProperties(this.definition)) {
         const designType = Reflect.getMetadata(
           MetaKey.DesignType,
           this.definition.prototype,
@@ -42,21 +42,6 @@ class InspectedDefinition {
 
   get embeddedProperties(): HydratedProperty[] {
     return this.getProperties(MetaKey.EmbeddedType)
-  }
-
-  get manyToManyProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.ManyToManyType)
-  }
-
-  get belongsToProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.BelongsToType)
-  }
-
-  get hasOneProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.HasOneType)
-  }
-  get hasManyProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.HasManyType)
   }
 
   get queryProperties(): HydratedProperty[] {
@@ -96,60 +81,5 @@ export class HydratedProperty {
 
   get<T = any>(key: MetaKey) {
     return Metadata.for(this.definition).with(this.name).get<T>(key)
-  }
-
-  getManyToMany() {
-    const referencesMany = this.get<any>(MetaKey.ManyToManyType)
-
-    /* istanbul ignore if */
-    if (util.isNil(referencesMany)) {
-      throw new Error(`Property ${this.name} is not an many to many property`)
-    }
-
-    return referencesMany
-  }
-
-  getHasOne() {
-    const result = this.get<any>(MetaKey.HasOneType)
-
-    /* istanbul ignore if */
-    if (util.isNil(result)) {
-      throw new Error(`Property ${this.name} is not an has one property`)
-    }
-
-    return result
-  }
-
-  getEmbedded() {
-    const result = this.get<any>(MetaKey.EmbeddedType)
-
-    /* istanbul ignore if */
-    if (util.isNil(result)) {
-      throw new Error(`Property ${this.name} is not an embedded property`)
-    }
-
-    return result
-  }
-
-  getBelongsTo() {
-    const result = this.get<any>(MetaKey.BelongsToType)
-
-    /* istanbul ignore if */
-    if (util.isNil(result)) {
-      throw new Error(`Property ${this.name} is not an has one property`)
-    }
-
-    return result
-  }
-
-  getHasMany() {
-    const result = this.get<any>(MetaKey.HasManyType)
-
-    /* istanbul ignore if */
-    if (util.isNil(result)) {
-      throw new Error(`Property ${this.name} is not an has many property`)
-    }
-
-    return result
   }
 }

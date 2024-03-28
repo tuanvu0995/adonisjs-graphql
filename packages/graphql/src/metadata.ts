@@ -10,10 +10,6 @@ export enum MetaKey {
   DesignType = 'design:type',
   ParamTypes = 'design:paramtypes',
   ReturnType = 'design:returntype',
-  HasOneType = 'HasOneType',
-  HasManyType = 'HasManyType',
-  BelongsToType = 'BelongsToType',
-  ManyToManyType = 'ManyToManyType',
   Definition = 'Definition',
   Property = 'Property',
   EmbeddedType = 'EmbeddedType',
@@ -36,7 +32,7 @@ export default class Metadata {
     return result
   }
 
-  static getDefinationProperties(target: TargetClass): { [property: string]: MetaValue } {
+  static getProperties(target: TargetClass): { [property: string]: MetaValue } {
     return target[METADATA]
   }
 

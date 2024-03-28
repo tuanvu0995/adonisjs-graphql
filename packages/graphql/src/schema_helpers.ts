@@ -9,17 +9,9 @@ import {
 import { PropertyMetaOptions } from './types.js'
 import Schema from './schema.js'
 
-export function getNamedType(name: string) {
-  return Schema.getType(name)
-}
-
-export function getInputType(arg: { type: () => any; name?: string; index?: number }) {
-  if (!arg) return null
-
-  const type = arg?.type()
-
+export function getInputType(arg: { type: () => any }) {
   const getType = (inputType: any) => {
-    if (type instanceof GraphQLScalarType) return type
+    if (inputType instanceof GraphQLScalarType) return inputType
 
     switch (inputType.name) {
       case 'String':
@@ -29,20 +21,19 @@ export function getInputType(arg: { type: () => any; name?: string; index?: numb
       case 'Boolean':
         return GraphQLBoolean
       default:
-        return getNamedType(inputType.name)
+        return Schema.getType(inputType.name)
     }
   }
+  const type = arg.type()
   return Array.isArray(type) ? type.map(getType) : getType(type)
 }
 
 export function getPropretyType(options: PropertyMetaOptions) {
   const definedType = getInputType(options)
-  if (!definedType) {
-    return null
-  }
+  if (!definedType) return null
   const isArray = Array.isArray(definedType)
   const namedType = isArray ? definedType[0] : definedType
+  if (!namedType) return null
   const finalType = isArray ? new GraphQLList(namedType) : namedType
-
   return options.nullable ? finalType : new GraphQLNonNull(finalType)
 }

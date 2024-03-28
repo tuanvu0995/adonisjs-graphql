@@ -1,5 +1,6 @@
 import {
   GraphQLInputObjectType,
+  GraphQLNamedType,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -19,7 +20,7 @@ export default class Schema {
     types: [],
   }
 
-  static getType(name: string) {
+  static getType(name: string): GraphQLNamedType | undefined {
     return this.schema.types.find((t: any) => t.name === name)
   }
 
@@ -87,10 +88,13 @@ export default class Schema {
     }
 
     const fields = () => {
-      return properties.reduce((acc: any, property: any) => {
+      return properties.reduce((acc: any, property: HydratedProperty) => {
         const options: PropertyMetaOptions = property.get(MetaKey.Property)
         const fieldType = this.getGetOrCreateType(options)
 
+        /**
+         * Create a field resolver when the property has a relation
+         */
         if (options.relation) {
           acc[property.name] = {
             type: fieldType,
@@ -110,23 +114,22 @@ export default class Schema {
           return acc
         }
 
+        // Will create the field type when serializeAs = null
         if (options?.serializeAs !== undefined || options?.serializeAs !== null) {
           acc[property.name] = {
             type: fieldType,
           }
         }
+
         return acc
       }, {})
     }
 
     const options = Metadata.for(definition).get(MetaKey.Definition)
-    const typeObject = {
-      name: definition.name,
-      fields,
-    }
+    const typeOptions = { name: definition.name, fields }
     return options?.isInputType
-      ? new GraphQLInputObjectType(typeObject)
-      : new GraphQLObjectType(typeObject)
+      ? new GraphQLInputObjectType(typeOptions)
+      : new GraphQLObjectType(typeOptions)
   }
 
   private static buildQuery(
@@ -140,15 +143,12 @@ export default class Schema {
 
       const queryArgs: ArgMetaOptions[] = query.get(MetaKey.ParamTypes) || []
       const args = queryArgs.reduce((acc2: any, arg: ArgMetaOptions) => {
-        const inputType = getInputType(arg)
-        const paramType = inputType || GraphQLString
-        acc2[arg.name] = {
-          type: arg.nullable ? paramType : new GraphQLNonNull(paramType),
-        }
+        const paramType = this.getGetOrCreateType(arg)
+        acc2[arg.name] = { type: paramType }
         return acc2
       }, {})
 
-      const outputType = getPropretyType(options)
+      const outputType = this.getGetOrCreateType(options)
 
       acc[query.name] = {
         type: outputType,
