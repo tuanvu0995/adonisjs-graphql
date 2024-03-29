@@ -8,6 +8,12 @@ export enum PropertyRelation {
   ManyToMany = 'manyToMany',
 }
 
+export enum Nullable {
+  Items = 'items',
+  List = 'list',
+  ListAndItems = 'listAndItems',
+}
+
 /**
  * GraphQL types
  */
@@ -28,9 +34,9 @@ export type CommonMetaOptions = {
 }
 
 export type PropertyMetaOptions = CommonMetaOptions & {
-  nullable?: boolean
   serializeAs?: string | null
   relation?: PropertyRelation
+  nullable?: boolean | Nullable
 }
 
 export type QueryMetaOptions = CommonMetaOptions & {
@@ -40,6 +46,6 @@ export type QueryMetaOptions = CommonMetaOptions & {
 
 export type ArgMetaOptions = CommonMetaOptions & {
   index: number
-  nullable?: boolean
+  nullable?: boolean | Nullable
   defaultValue?: any
 }

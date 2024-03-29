@@ -47,3 +47,7 @@ export function getPropretyType(options: PropertyMetaOptions) {
 
   return options.nullable ? namedType : new GraphQLNonNull(namedType)
 }
+
+export function createListType(type: GraphQLNamedType) {
+  return new GraphQLList(type)
+}

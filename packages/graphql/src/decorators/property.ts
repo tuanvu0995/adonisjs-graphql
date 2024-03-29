@@ -6,10 +6,11 @@ import stringHelpers from '@adonisjs/core/helpers/string'
 import * as utils from '../utils.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { ISODateTime } from '../scalars/index.js'
+import { Nullable } from '../types.js'
 
 export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | 'serializeAs'> & {
   type?: () => any
-  nullable?: boolean
+  nullable?: boolean | Nullable
   columnName?: string
   serializeAs?: string | null
   isPrimary?: boolean

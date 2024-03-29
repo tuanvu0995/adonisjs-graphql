@@ -1,10 +1,11 @@
 import { GraphQLString } from 'graphql'
 import Metadata, { MetaKey } from '../metadata.js'
 import * as utils from '../utils.js'
+import { Nullable } from '../types.js'
 
 export type FieldOptions = {
   type?: () => any
-  nullable?: boolean
+  nullable?: boolean | Nullable
   description?: string
   deprecationReason?: string
 }

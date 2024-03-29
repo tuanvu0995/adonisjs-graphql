@@ -1,7 +1,8 @@
 import Metadata, { MetaKey } from '../metadata.js'
+import { Nullable } from '../types.js'
 
 type ArgOptions = {
-  nullable?: boolean
+  nullable?: boolean | Nullable
   defaultValue?: any
   type?: () => any
 }

@@ -44,7 +44,6 @@ export const defaultToChain = <T>(...args: Array<T | null | undefined>) => {
 }
 
 export function memoize<T extends Function>(func: T, resolver?: (...args: any[]) => any): T {
-  /* istanbul ignore if */
   if (typeof func !== 'function' || (resolver && typeof resolver !== 'function')) {
     throw new TypeError('FUNC_ERROR_TEXT')
   }
