@@ -2,7 +2,14 @@
 
 <br />
 
+<p align="center">
 [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
+</p>
+
+
+<p align="center">
+<img src="docs/img/adonis-graphql.png" width="400px" alt="Adonis Graphql">
+</p>
 
 ## Introduction
 

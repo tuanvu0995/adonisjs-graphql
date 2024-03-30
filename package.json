@@ -11,6 +11,8 @@
     "build": "pnpm -r run build",
     "lint": "pnpm -r run lint",
     "format": "pnpm -r run format",
+    "test": "pnpm -r run test",
+    "test:watch": "pnpm -r run test:watch",
     "typecheck": "pnpm -r run typecheck"
   },
   "keywords": [],
