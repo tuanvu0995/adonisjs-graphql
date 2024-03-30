@@ -7,8 +7,9 @@ import {
   GraphQLScalarType,
   GraphQLString,
 } from 'graphql'
-import { PropertyMetaOptions } from './types.js'
+import { ArgMetaOptions, PropertyMetaOptions } from './types.js'
 import Schema from './schema.js'
+import { HttpContext } from '@adonisjs/core/http'
 
 export function getInputType(arg: {
   type: () => any
@@ -50,4 +51,14 @@ export function getPropretyType(options: PropertyMetaOptions) {
 
 export function createListType(type: GraphQLNamedType) {
   return new GraphQLList(type)
+}
+
+export function getPrameters(parameters: ArgMetaOptions[], context: HttpContext, args: any) {
+  return parameters.map((param: any) => {
+    if (!param.name) return args
+    if (param.name === 'context') {
+      return context
+    }
+    return (args || {})[param.name] || param.defaultValue || undefined
+  })
 }

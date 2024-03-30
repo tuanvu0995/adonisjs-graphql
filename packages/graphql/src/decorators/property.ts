@@ -1,5 +1,5 @@
 import { GraphQLString } from 'graphql'
-import { column } from '@adonisjs/lucid/orm'
+import { BaseModel, column } from '@adonisjs/lucid/orm'
 import { ColumnOptions } from '@adonisjs/lucid/types/model'
 import stringHelpers from '@adonisjs/core/helpers/string'
 
@@ -34,10 +34,12 @@ function Property(options?: PropertyOptions): PropertyDecorator & MethodDecorato
     /**
      * Lucid ORM column decorator
      */
-    column({
-      ...options,
-      columnName: stringHelpers.snakeCase(propertyKey as string) as string,
-    })(target, propertyKey)
+    if (target instanceof BaseModel) {
+      column({
+        ...options,
+        columnName: stringHelpers.snakeCase(propertyKey as string) as string,
+      })(target, propertyKey)
+    }
 
     /**
      * Metadata for the property
@@ -82,6 +84,15 @@ Property.dateTime = function (
     Metadata.for(target)
       .with(propertyKey)
       .set(MetaKey.Property, utils.merge(defaultOptions, options))
+  }
+}
+
+Property.resolver = function (returnType: Function): MethodDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target).with(propertyKey).set(MetaKey.PropertyResolver, {
+      isResolver: true,
+      type: returnType,
+    })
   }
 }
 

@@ -40,7 +40,7 @@ export class GraphqlCore {
     if (!definitions?.length) {
       throw new Error('[GraphQL] definitions are missing')
     }
-    this.schema = Schema.build(this.app, definitions)
+    this.schema = Schema.build(definitions)
   }
 
   async ready() {

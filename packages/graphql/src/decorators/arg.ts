@@ -38,3 +38,16 @@ export function Context() {
     })
   }
 }
+
+export function Parent(type?: Function) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
+    const paramTypes = Reflect.getOwnMetadata(MetaKey.ParamTypes, target, propertyKey)
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(MetaKey.ParamTypes, {
+        index: parameterIndex,
+        name: 'parent',
+        type: () => type || paramTypes[parameterIndex],
+      })
+  }
+}

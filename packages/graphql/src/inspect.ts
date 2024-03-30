@@ -60,6 +60,7 @@ class InspectedDefinition {
     return this.getProperties(MetaKey.Property, { isInput: true })
   }
 
+
   for(propertyName: string | symbol): HydratedProperty {
     const designType = Reflect.getMetadata(
       MetaKey.DesignType,

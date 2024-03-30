@@ -37,6 +37,8 @@ export type PropertyMetaOptions = CommonMetaOptions & {
   serializeAs?: string | null
   relation?: PropertyRelation
   nullable?: boolean | Nullable
+  isResolver?: boolean
+  definition?: any
 }
 
 export type QueryMetaOptions = CommonMetaOptions & {

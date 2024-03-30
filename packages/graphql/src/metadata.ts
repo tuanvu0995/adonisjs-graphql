@@ -10,6 +10,7 @@ export enum MetaKey {
   ReturnType = 'design:returntype',
   Definition = 'Definition',
   Property = 'Property',
+  PropertyResolver = 'PropertyResolver',
   EmbeddedType = 'EmbeddedType',
   Query = 'Query',
   Mutation = 'Mutation',

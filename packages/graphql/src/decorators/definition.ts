@@ -20,6 +20,19 @@ export function Definition(options?: DefinitionOptions): ClassDecorator {
   }
 }
 
+/**
+ * @summary Decorator for defining a class as a GraphQL resolver
+ * @param of - The type of the resolver
+ */
+export function Resolver(of: Function): ClassDecorator {
+  return (target: TargetClass) => {
+    Metadata.for(target).set(MetaKey.Definition, {
+      isResolver: true,
+      type: of,
+    })
+  }
+}
+
 type InputTypeOptions = {
   description?: string
 }

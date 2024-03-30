@@ -1,6 +1,5 @@
 export * from './definition.js'
 export * from './property.js'
-export * from './resolve.js'
+export * from './resolver.js'
 export * from './arg.js'
-export * from './field.js'
 export * from './relation.js'
