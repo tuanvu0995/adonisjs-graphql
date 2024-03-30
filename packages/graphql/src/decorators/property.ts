@@ -6,7 +6,7 @@ import stringHelpers from '@adonisjs/core/helpers/string'
 import * as utils from '../utils.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { ISODateTime } from '../scalars/index.js'
-import { Nullable } from '../types.js'
+import { Nullable, PropertyRelation } from '../types.js'
 
 export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | 'serializeAs'> & {
   type?: () => any
@@ -73,10 +73,12 @@ Property.dateTime = function (
     /**
      * Lucid ORM column decorator
      */
-    column.dateTime({
-      ...options,
-      columnName: stringHelpers.snakeCase(propertyKey as string) as string,
-    })(target, propertyKey as string)
+    if (target instanceof BaseModel) {
+      column.dateTime({
+        ...options,
+        columnName: stringHelpers.snakeCase(propertyKey as string) as string,
+      })(target as object, propertyKey as string)
+    }
 
     /**
      * Metadata for the property
@@ -87,12 +89,97 @@ Property.dateTime = function (
   }
 }
 
+/**
+ * @summary Decorator for defining a GraphQL property as a resolver
+ * @param returnType - The return type of the resolver
+ */
 Property.resolver = function (returnType: Function): MethodDecorator {
   return (target: object, propertyKey: string | symbol) => {
     Metadata.for(target).with(propertyKey).set(MetaKey.PropertyResolver, {
       isResolver: true,
       type: returnType,
     })
+  }
+}
+
+/**
+ * @summary Decorator for defining a has-many relation
+ * @param type - The type of the relation
+ * @param options - Options for the relation
+ */
+Property.hasMany = function (type: () => any, options?: any): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(
+        MetaKey.Property,
+        utils.merge({
+          ...options,
+          relation: PropertyRelation.HasMany,
+          type,
+        })
+      )
+  }
+}
+
+/**
+ * @summary Decorator for defining a has-one relation
+ * @param type - The type of the relation
+ * @param options - Options for the relation
+ */
+Property.hasOne = function (type: () => any, options?: any): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(
+        MetaKey.Property,
+        utils.merge({
+          ...options,
+          relation: PropertyRelation.HasOne,
+          type,
+        })
+      )
+  }
+}
+
+/**
+ * @summary Decorator for defining a belongs-to relation
+ * @param type - The type of the relation
+ * @param options - Options for the relation
+ */
+Property.belongsTo = function (type: () => any, options?: any): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(
+        MetaKey.Property,
+        utils.merge({
+          ...options,
+          relation: PropertyRelation.BelongsTo,
+          type,
+        })
+      )
+  }
+}
+
+/**
+ * @summary Decorator for defining a many-to-many relation
+ * @param type - The type of the relation
+ * @param options - Options for the relation
+ * @returns - The decorated property
+ */
+Property.manyToMany = function (type: () => any, options?: any): PropertyDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(
+        MetaKey.Property,
+        utils.merge({
+          ...options,
+          relation: PropertyRelation.ManyToMany,
+          type,
+        })
+      )
   }
 }
 

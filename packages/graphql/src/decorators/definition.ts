@@ -53,7 +53,7 @@ type ArgTypeOptions = {
  * @summary Decorator for defining a class as a GraphQL argument type
  * @param options - Options for the argument type
  */
-export function Args(options?: ArgTypeOptions): ClassDecorator {
+export function ArgsType(options?: ArgTypeOptions): ClassDecorator {
   return (target: any) => {
     Definition({ ...options, isArgType: true })(target)
   }

@@ -11,7 +11,6 @@ export enum MetaKey {
   Definition = 'Definition',
   Property = 'Property',
   PropertyResolver = 'PropertyResolver',
-  EmbeddedType = 'EmbeddedType',
   Query = 'Query',
   Mutation = 'Mutation',
   Subscription = 'Subscription',
@@ -25,7 +24,7 @@ export default class Metadata {
     const result: Record<string, any> = {}
     for (const property of Object.keys(util.defaultTo(target[METADATA], []))) {
       const value = this.getMetaValue(target, metaKey, property)
-      if (util.isUndefined(value)) continue
+      if (util.isNil(value)) continue
       result[property] = value
     }
     return result
@@ -76,10 +75,10 @@ export default class Metadata {
   ): void {
     const constructor = this.getConstructor(target)
 
-    if (util.isUndefined(constructor[METADATA])) {
+    if (util.isNil(constructor[METADATA])) {
       constructor[METADATA] = {}
     }
-    if (util.isUndefined(constructor[METADATA][property])) {
+    if (util.isNil(constructor[METADATA][property])) {
       constructor[METADATA][property] = {}
     }
 

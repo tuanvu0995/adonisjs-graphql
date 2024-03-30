@@ -40,10 +40,6 @@ class InspectedDefinition {
 
   getProperties = util.memoize(this.getPropertiesUncached)
 
-  get embeddedProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.EmbeddedType)
-  }
-
   get queryProperties(): HydratedProperty[] {
     return this.getProperties(MetaKey.Query)
   }
@@ -52,14 +48,18 @@ class InspectedDefinition {
     return this.getProperties(MetaKey.Mutation)
   }
 
-  get subscriptionProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.Subscription)
-  }
+  // todo: implement subscriptionProperties
+  // get subscriptionProperties(): HydratedProperty[] {
+  //   return this.getProperties(MetaKey.Subscription)
+  // }
 
   get inputProperties(): HydratedProperty[] {
     return this.getProperties(MetaKey.Property, { isInput: true })
   }
 
+  get propertyResolvers(): HydratedProperty[] {
+    return this.getProperties(MetaKey.PropertyResolver)
+  }
 
   for(propertyName: string | symbol): HydratedProperty {
     const designType = Reflect.getMetadata(

@@ -27,6 +27,23 @@ export function Arg(name: string, options?: ArgOptions) {
   }
 }
 
+export type ArgsOptions = {
+  [key: string]: any
+}
+
+/**
+ * @summary Decorator for defining a GraphQL arguments object
+ */
+export function Args(defaultValues?: ArgsOptions) {
+  return (target: any, propertyKey: string, parameterIndex: number) => {
+    Metadata.for(target).with(propertyKey).set(MetaKey.ParamTypes, {
+      index: parameterIndex,
+      name: 'args',
+      defaultValues,
+    })
+  }
+}
+
 /**
  * @summary Decorator for defining a GraphQL context argument
  */

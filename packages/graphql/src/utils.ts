@@ -1,19 +1,6 @@
 export const isNil = (value: any): value is null | undefined =>
   value === null || value === undefined
 
-export const isNotNil = (value: any) => !isNil(value)
-
-export const isArray = (value: any) => Array.isArray(value)
-
-export const isNotNullObject = (value: any): value is object =>
-  typeof value === 'object' && value !== null
-
-export const isFunction = (value: any) => typeof value === 'function'
-
-export const isUndefined = (value: any): value is undefined => typeof value === 'undefined'
-
-export const isTruthy = (value: any) => !!value
-
 export const merge = (...objects: any[]): any => {
   if (objects.length === 0) return {}
   if (objects.length === 1) return objects[0]
@@ -32,15 +19,6 @@ export const merge = (...objects: any[]): any => {
 export const defaultTo = <T>(value: T | null | undefined, defaultValue: T): T => {
   const shouldUseDefaultValue = isNil(value) || (typeof value === 'number' && Number.isNaN(value))
   return shouldUseDefaultValue ? defaultValue : (value as T)
-}
-
-export const defaultToChain = <T>(...args: Array<T | null | undefined>) => {
-  for (const arg of args) {
-    const shouldCheckNextArg = isNil(arg) || (typeof arg === 'number' && Number.isNaN(arg))
-    const shouldReturnThisArg = !shouldCheckNextArg
-    if (shouldReturnThisArg) return arg
-  }
-  return args[args.length - 1]
 }
 
 export function memoize<T extends Function>(func: T, resolver?: (...args: any[]) => any): T {
