@@ -1,6 +1,15 @@
 export const isNil = (value: any): value is null | undefined =>
   value === null || value === undefined
 
+export const isConstructor = (value: any): value is new (...args: any[]) => any => {
+  try {
+    new value()
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const merge = (...objects: any[]): any => {
   if (objects.length === 0) return {}
   if (objects.length === 1) return objects[0]

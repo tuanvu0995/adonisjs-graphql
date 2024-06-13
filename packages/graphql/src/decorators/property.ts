@@ -1,12 +1,12 @@
 import { GraphQLString } from 'graphql'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import { ColumnOptions } from '@adonisjs/lucid/types/model'
 import stringHelpers from '@adonisjs/core/helpers/string'
 
 import * as utils from '../utils.js'
 import Metadata, { MetaKey } from '../metadata.js'
-import { ISODateTime } from '../scalars/index.js'
 import { Nullable, PropertyRelation } from '../types.js'
+import { DateTimeScalar } from '../scalars/index.js'
 
 export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | 'serializeAs'> & {
   type?: () => any
@@ -63,7 +63,7 @@ Property.dateTime = function (
   options?: DateTimePropertyOptions
 ): PropertyDecorator & MethodDecorator {
   const defaultOptions: PropertyOptions = {
-    type: () => ISODateTime,
+    type: () => DateTimeScalar,
     nullable: false,
     isPrimary: false,
     serializeAs: 'column',
@@ -109,6 +109,7 @@ Property.resolver = function (returnType: Function): MethodDecorator {
  */
 Property.hasMany = function (type: () => any, options?: any): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
+    hasMany(type, options)(target as any, propertyKey as string)
     Metadata.for(target)
       .with(propertyKey)
       .set(
@@ -129,6 +130,7 @@ Property.hasMany = function (type: () => any, options?: any): PropertyDecorator 
  */
 Property.hasOne = function (type: () => any, options?: any): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
+    hasOne(type, options)(target as any, propertyKey as string)
     Metadata.for(target)
       .with(propertyKey)
       .set(
@@ -149,12 +151,14 @@ Property.hasOne = function (type: () => any, options?: any): PropertyDecorator {
  */
 Property.belongsTo = function (type: () => any, options?: any): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
+    belongsTo(type, options)(target as any, propertyKey as string)
     Metadata.for(target)
       .with(propertyKey)
       .set(
         MetaKey.Property,
         utils.merge({
           ...options,
+          nullable: true,
           relation: PropertyRelation.BelongsTo,
           type,
         })
@@ -170,6 +174,7 @@ Property.belongsTo = function (type: () => any, options?: any): PropertyDecorato
  */
 Property.manyToMany = function (type: () => any, options?: any): PropertyDecorator {
   return (target: object, propertyKey: string | symbol) => {
+    manyToMany(type, options)(target as any, propertyKey as string)
     Metadata.for(target)
       .with(propertyKey)
       .set(

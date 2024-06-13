@@ -42,6 +42,9 @@ export default class Metadata {
       get<T = any>(key: MetaKey): T {
         return Metadata.getMetaValue(target, key, DEFINITION)
       },
+      exists(): boolean {
+        return Metadata.exists(target)
+      },
       with(property: string | symbol) {
         return {
           set<T = any>(key: MetaKey, value: T) {
@@ -64,7 +67,12 @@ export default class Metadata {
     metaKey: MetaKey,
     property: string | symbol
   ): MetaValue {
+    if (!this.getConstructor(target)?.[METADATA]?.[property]) return
     return this.getConstructor(target)[METADATA]?.[property]?.[metaKey]
+  }
+
+  private static exists(target: TargetClass): boolean {
+    return !util.isNil(this.getConstructor(target)?.[METADATA])
   }
 
   private static setMetaValue(

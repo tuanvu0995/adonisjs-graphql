@@ -1,10 +1,13 @@
-import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
-import { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
-import { ArgMetaOptions, PropertyMetaOptions, PropertyRelation, QueryMetaOptions } from './types.js'
-import { getPrameters, getPropretyType } from './schema_helpers.js'
-import Metadata, { MetaKey } from './metadata.js'
-import { HydratedProperty, inspect } from './inspect.js'
+import { HttpContext } from '@adonisjs/core/http'
+import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
+import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from '../types.js'
+import { getPrameters, getPropretyType } from './helpers.js'
+import Metadata, { MetaKey } from '../metadata.js'
+import { HydratedProperty, inspect } from '../inspect.js'
+import { createRelation } from './create_relation.js'
+import { createResolver } from './create_resolver.js'
+import { createField } from './create_field.js'
 
 export default class Schema {
   static schema: any = {
@@ -17,8 +20,22 @@ export default class Schema {
     return this.schema.types.find((t: any) => t.name === name)
   }
 
-  static build(definitions: any[]) {
+  /**
+   * Build the schema from the definitions
+   */
+  static build(_definitions: any[]) {
+    /**
+     * Filter out definitions that don't have metadata
+     */
+    const definitions = _definitions.filter((def) => {
+      return Metadata.for(def).exists()
+    })
+
     this.prepare(definitions)
+
+    /**
+     * Build all types from the definitions
+     */
     for (const definition of definitions) {
       const type = this.buildTypes(definition)
       if (type) {
@@ -26,6 +43,9 @@ export default class Schema {
       }
     }
 
+    /**
+     * Build queries, mutations and subscriptions
+     */
     for (const definition of definitions) {
       const queries = inspect(definition).queryProperties
       const query = this.buildQuery(queries, MetaKey.Query)
@@ -39,11 +59,11 @@ export default class Schema {
         this.schema.mutation = { ...this.schema.mutation, ...mutation }
       }
 
-      const subscriptions = inspect(definition).subscriptionProperties
-      const subscription = this.buildQuery(subscriptions, MetaKey.Subscription)
-      if (subscription) {
-        this.schema.subscription = { ...this.schema.subscription, ...subscription }
-      }
+      // const subscriptions = inspect(definition).subscriptionProperties
+      // const subscription = this.buildQuery(subscriptions, MetaKey.Subscription)
+      // if (subscription) {
+      //   this.schema.subscription = { ...this.schema.subscription, ...subscription }
+      // }
     }
 
     return this.buildSchema(this.schema)
@@ -110,9 +130,8 @@ export default class Schema {
     if (!Array.isArray(properties) || properties.length === 0) {
       return null
     }
-
     const fields = () => {
-      return properties.reduce((acc: any, property: HydratedProperty) => {
+      return properties.reduce((acc: Record<string, any>, property: HydratedProperty) => {
         const options: PropertyMetaOptions = property.get(MetaKey.Property)
         const fieldType = this.getGetOrCreateType(options)
 
@@ -120,51 +139,21 @@ export default class Schema {
          * Create a field resolver when the property has a relation
          */
         if (options.relation) {
-          acc[property.name] = {
-            type: fieldType,
-            description: options.description,
-            deprecationReason: options.deprecationReason,
-            resolve: async (parent: any, _args: any, _: HttpContext) => {
-              if (
-                [
-                  PropertyRelation.HasMany,
-                  PropertyRelation.ManyToMany,
-                  PropertyRelation.HasOne,
-                ].includes(options.relation!)
-              ) {
-                return await parent.related(property.name).query().orderBy('id', 'asc')
-              }
-              return await parent.related(property.name).query().first()
-            },
-          }
+          createRelation(acc, options, fieldType, property)
           return acc
         }
 
+        /**
+         * Create a field resolver when the property is a resolver
+         */
         if (options.isResolver) {
-          const resolverArgs: ArgMetaOptions[] = property.get(MetaKey.ParamTypes) || []
-          acc[property.name] = {
-            type: fieldType,
-            description: options.description,
-            deprecationReason: options.deprecationReason,
-            resolve: async (parent: any, _args: any, context: HttpContext) => {
-              const resolver = await app.container.make(options.definition)
-              const parameters = getPrameters(resolverArgs, context, {
-                ..._args,
-                parent,
-              })
-              return resolver[property.name](...parameters)
-            },
-          }
+          createResolver(acc, options, fieldType, property)
           return acc
         }
 
         // Will create the field type when serializeAs = null
         if (options?.serializeAs !== undefined || options?.serializeAs !== null) {
-          acc[property.name] = {
-            type: fieldType,
-            description: options.description,
-            deprecationReason: options.deprecationReason,
-          }
+          createField(acc, options, fieldType, property)
         }
 
         return acc
@@ -183,7 +172,7 @@ export default class Schema {
   }
 
   private static buildQuery(queries: HydratedProperty[], metaKey: MetaKey = MetaKey.Query) {
-    if (queries.length === 0) return null
+    if (!queries?.length) return null
     const fields = queries.reduce((acc: any, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
 
