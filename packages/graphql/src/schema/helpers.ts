@@ -7,9 +7,9 @@ import {
   GraphQLScalarType,
   GraphQLString,
 } from 'graphql'
+import { HttpContext } from '@adonisjs/core/http'
 import { ArgMetaOptions, PropertyMetaOptions } from '../types.js'
 import Schema from './schema.js'
-import { HttpContext } from '@adonisjs/core/http'
 
 export function getInputType(arg: {
   type: () => any

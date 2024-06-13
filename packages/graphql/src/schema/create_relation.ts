@@ -8,22 +8,17 @@ export function createRelation(
   fieldType: any,
   property: any
 ) {
-  const relationType = [PropertyRelation.HasMany, PropertyRelation.ManyToMany].includes(
+  const isManyRelation = [PropertyRelation.HasMany, PropertyRelation.ManyToMany].includes(
     options.relation!
   )
-    ? new GraphQLList(fieldType)
-    : fieldType
+  const relationType = isManyRelation ? new GraphQLList(fieldType) : fieldType
 
   acc[property.name] = {
     type: relationType,
     description: options.description,
     deprecationReason: options.deprecationReason,
     resolve: async (parent: any, _args: any, _: HttpContext) => {
-      if (
-        [PropertyRelation.HasMany, PropertyRelation.ManyToMany, PropertyRelation.HasOne].includes(
-          options.relation!
-        )
-      ) {
+      if (isManyRelation) {
         return await parent.related(property.name).query().orderBy('id', 'asc')
       }
       return await parent.related(property.name).query().first()
