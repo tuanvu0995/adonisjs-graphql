@@ -1,5 +1,5 @@
 import type { ApplicationService } from '@adonisjs/core/types'
-import type { GraphqlCore } from '../src/graphql.js'
+import type { GraphqlCore } from '../src/graphql_core.js'
 import 'reflect-metadata'
 
 declare module '@adonisjs/core/types' {
@@ -16,7 +16,7 @@ export default class GraphqlProvider {
    */
   register() {
     this.app.container.singleton('graphql', async (resolver) => {
-      const { GraphqlCore } = await import('../src/graphql.js')
+      const { GraphqlCore } = await import('../src/graphql_core.js')
       const queueConfig = await resolver.make('config')
       const logger = await this.app.container.make('logger')
       return new GraphqlCore(queueConfig.get('graphql'), logger, this.app)
