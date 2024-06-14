@@ -1,7 +1,7 @@
 {
   "name": "adonis-workspace",
   "version": "1.0.0",
-  "description": "",
+  "description": "Adonisjs GraphQL Workspace",
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter=adonisjs-server start",
