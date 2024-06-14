@@ -14,7 +14,7 @@
     "test": "pnpm -r run test",
     "test:watch": "pnpm -r run test:watch",
     "typecheck": "pnpm -r run typecheck",
-    "changeset": "pnpm run changeset"
+    "changeset": "pnpm --filter=adonisjs-graphql changeset"
   },
   "keywords": [],
   "author": "",
@@ -22,8 +22,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "devDependencies": {
-    "@changesets/cli": "^2.27.5"
-  }
+  ]
 }
