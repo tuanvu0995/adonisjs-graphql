@@ -45,7 +45,7 @@ jobs:
       - name: Check should create release
         id: should-create-release
         run: |
-          if [[ $(cat ./packages/graphql/.changeset/pre.json | grep -m 1 mode | sed 's/[^a-z]//g') == *"pre"* ]]; then
+          if [[ $(cat ./.changeset/pre.json | grep -m 1 mode | sed 's/[^a-z]//g') == *"pre"* ]]; then
             echo "RESULT=true" >> $GITHUB_OUTPUT
           else
             echo "RESULT=false" >> $GITHUB_OUTPUT
@@ -106,7 +106,7 @@ jobs:
       - name: Check should create release
         id: should-create-release
         run: |
-          if [[ $(cat ./packages/graphql/.changeset/pre.json | grep -m 1 mode | sed 's/[^a-z]//g') == *"pre"* ]]; then
+          if [[ $(cat ./.changeset/pre.json | grep -m 1 mode | sed 's/[^a-z]//g') == *"pre"* ]]; then
             echo "RESULT=true" >> $GITHUB_OUTPUT
           else
             echo "RESULT=false" >> $GITHUB_OUTPUT
