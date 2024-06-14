@@ -10,7 +10,7 @@ import { DateTimeScalar } from './scalars/index.js'
 export class GraphqlCore {
   protected schema: GraphQLSchema | undefined
 
-  protected pgHtml?: string
+  protected pgHtml: string | undefined
 
   constructor(
     private options: GraphQLConfig,
