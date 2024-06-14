@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "adonisjs-graphql": "0.0.1-next.0"
+  },
+  "changesets": [
+    "smooth-bees-change"
+  ]
+}
