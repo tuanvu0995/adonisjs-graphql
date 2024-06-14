@@ -60,24 +60,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Update pnpm-lock.yaml
-        id: update-lock-file
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          pnpm install --ignore-scripts --lockfile-only
-          if [[ $(git status --porcelain | grep -m 1 pnpm-lock.yaml | sed 's/[^a-z]\-//g') == *"pnpm-lock.yaml"* ]]; then
-            echo "IS_CHANGED=true" >> $GITHUB_OUTPUT
-          else
-            echo "IS_CHANGED=false" >> $GITHUB_OUTPUT
-          fi
-      - name: Commit pnpm-lock.yaml
+      - name: Commit changes
         if: steps.update-lock-file.outputs.IS_CHANGED == 'true'
         run: |
           git config --global user.name "$(git --no-pager log --format=format:'%an' -n 1)"
           git config --global user.email "$(git --no-pager log --format=format:'%ae' -n 1)"
-          git add pnpm-lock.yaml
-          git commit -m "chore: update pnpm-lock.yaml" -s
-          git push -u origin changeset-release/prerelease
+          git add .
+          git commit -m "chore: update changes" -s
+          git push --follow-tags
 
   release:
     if: github.event.pull_request.merged == true && github.base_ref == 'prerelease' && github.head_ref == 'changeset-release/prerelease'
