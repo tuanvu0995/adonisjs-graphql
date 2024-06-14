@@ -40,7 +40,7 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Enter prerelease mode
-        run: npx changeset pre enter next || true
+        run: pnpm changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -55,7 +55,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: npx changeset publish
+          publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
         run: pnpm install --ignore-scripts
 
       - name: Enter prerelease mode
-        run: npx changeset pre enter next || true
+        run: pnpm changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -126,7 +126,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: npx changeset publish
+          publish: pnpm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

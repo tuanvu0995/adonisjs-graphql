@@ -1,5 +1,4 @@
 ---
-"adonisjs-server": patch
 "adonisjs-graphql": patch
 ---
 

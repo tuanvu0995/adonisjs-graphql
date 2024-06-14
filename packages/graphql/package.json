@@ -35,8 +35,9 @@
     "watch": "tsc --watch",
     "postbuild": "npm run copy:templates",
     "release": "np",
-    "version": "npx changeset version",
-    "changeset": "npx changeset"
+    "version": "npm run build",
+    "prepublishOnly": "npm run build",
+    "changeset": "changeset"
   },
   "keywords": [],
   "author": "",
@@ -68,7 +69,6 @@
     "reflect-metadata": "^0.2.1"
   },
   "dependencies": {
-    "@changesets/cli": "^2.27.5",
     "graphql-scalars": "^1.23.0"
   },
   "publishConfig": {
