@@ -1,4 +1,4 @@
-# adonisjs-graphql
+# adonisjs-graphql (WIP)
 
 <p align="center">
 <img src="docs/img/adonis-graphql.png" width="400px" alt="Adonis Graphql">
