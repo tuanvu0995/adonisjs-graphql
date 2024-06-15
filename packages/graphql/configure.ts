@@ -18,12 +18,10 @@ import { stubsRoot } from './stubs/main.js'
 export async function configure(command: ConfigureCommand) {
   const codemods = await command.createCodemods()
 
-  await codemods.makeUsingStub(stubsRoot, 'start/graphql.stub', {})
+  await codemods.makeUsingStub(stubsRoot, 'config/graphql.stub', {})
   await codemods.makeUsingStub(stubsRoot, 'public/playground.stub', {})
 
   await codemods.updateRcFile((rcFile: any) => {
     rcFile.addProvider('adonisjs-graphql/graphql_provider')
-    // rcFile.addCommand('adonisjs-graphql/commands')
-    rcFile.addPreloadFile('#start/graphql')
   })
 }

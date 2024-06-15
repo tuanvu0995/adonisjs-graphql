@@ -43,13 +43,11 @@ export class GraphqlCore {
 
   private async loadDefinitions() {
     const appPath = this.app.makePath('app')
-    let files = await fs.readdir(appPath, { recursive: true })
+    let files = await fs.readdir(this.app.makePath('app'), { recursive: true })
     files = files.filter((file) => file.endsWith('.ts'))
 
     const definitions = await Promise.all(
-      files.map(async (file) => {
-        return await import(this.app.makePath('app', file))
-      })
+      files.map(async (file) => await import(`${appPath}/${file}`))
     ).then((modules) =>
       modules
         .map((module) => Object.values(module).filter((value) => utils.isConstructor(value)))
@@ -59,6 +57,7 @@ export class GraphqlCore {
     if (!definitions.length) {
       throw new Error('[GraphQL] definitions are missing')
     }
+
     return definitions
   }
 

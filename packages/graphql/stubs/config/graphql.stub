@@ -1,0 +1,19 @@
+{{{
+  exports({ to: app.configPath('graphql.ts') })
+}}}
+
+import { defineConfig } from 'adonisjs-graphql'
+
+const graphqlConfig = defineConfig({
+  /**
+   * The path to the GraphQL endpoint
+   */
+  graphqlPath: '/graphql',
+
+  /**
+   * Enable the GraphQL playground
+   */
+  playground: process.env.NODE_ENV !== 'production',
+})
+
+export default graphqlConfig

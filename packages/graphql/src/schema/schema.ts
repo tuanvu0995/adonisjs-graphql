@@ -27,9 +27,7 @@ export default class Schema {
     /**
      * Filter out definitions that don't have metadata
      */
-    const definitions = _definitions.filter((def) => {
-      return Metadata.for(def).exists()
-    })
+    const definitions = _definitions.filter((def) => Metadata.for(def).exists())
 
     this.prepare(definitions)
 
@@ -88,7 +86,7 @@ export default class Schema {
     })
   }
 
-  protected static getGetOrCreateType(options: PropertyMetaOptions) {
+  protected static getOrCreateType(options: PropertyMetaOptions) {
     const type = getPropretyType(options)
     if (type) return type
     const definition = options.type()
@@ -130,10 +128,11 @@ export default class Schema {
     if (!Array.isArray(properties) || properties.length === 0) {
       return null
     }
+
     const fields = () => {
       return properties.reduce((acc: Record<string, any>, property: HydratedProperty) => {
         const options: PropertyMetaOptions = property.get(MetaKey.Property)
-        const fieldType = this.getGetOrCreateType(options)
+        const fieldType = this.getOrCreateType(options)
 
         /**
          * Create a field resolver when the property has a relation
@@ -172,18 +171,18 @@ export default class Schema {
   }
 
   private static buildQuery(queries: HydratedProperty[], metaKey: MetaKey = MetaKey.Query) {
-    if (!queries?.length) return null
-    const fields = queries.reduce((acc: any, query: HydratedProperty) => {
+    if (!queries.length) return null
+    const fields = queries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
 
       const queryArgs: ArgMetaOptions[] = query.get(MetaKey.ParamTypes) || []
       const args = queryArgs.reduce((acc2: any, arg: ArgMetaOptions) => {
-        const paramType = this.getGetOrCreateType(arg)
+        const paramType = this.getOrCreateType(arg)
         acc2[arg.name] = { type: paramType }
         return acc2
       }, {})
 
-      const outputType = this.getGetOrCreateType(options)
+      const outputType = this.getOrCreateType(options)
 
       acc[query.name] = {
         type: outputType,

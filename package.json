@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter=adonisjs-server start",
-    "dev": "pnpm run watch & pnpm --filter=adonisjs-server dev ",
+    "dev": "pnpm run watch & pnpm --filter=adonis-server dev ",
     "ace": "pnpm --filter=adonisjs-server exec node ace",
     "watch": "pnpm -r watch",
     "build": "pnpm -r run build",
