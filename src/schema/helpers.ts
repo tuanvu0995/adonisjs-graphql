@@ -25,7 +25,7 @@ export function getInputType(arg: {
       case 'Boolean':
         return GraphQLBoolean
       default:
-        return Schema.getType(inputType.name)
+        return Schema.getType(inputType.__name__ || inputType.name)
     }
   }
   const type = arg.type() as any | any[]

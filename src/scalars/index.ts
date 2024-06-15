@@ -7,3 +7,4 @@ export const String = GraphQLString
 export const Boolean = GraphQLBoolean
 
 export * from './datetime.js'
+export * from './enum.js'

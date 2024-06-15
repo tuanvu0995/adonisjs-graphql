@@ -20,6 +20,13 @@ export default class Schema {
     return this.schema.types.find((t: any) => t.name === name)
   }
 
+  static registerType(type: GraphQLNamedType) {
+    if (this.getType(type.name)) {
+      throw new Error(`Type ${type.name} is already registered`)
+    }
+    this.schema.types.push(type)
+  }
+
   /**
    * Build the schema from the definitions
    */
@@ -128,7 +135,6 @@ export default class Schema {
     if (!Array.isArray(properties) || properties.length === 0) {
       return null
     }
-
     const fields = () => {
       return properties.reduce((acc: Record<string, any>, property: HydratedProperty) => {
         const options: PropertyMetaOptions = property.get(MetaKey.Property)

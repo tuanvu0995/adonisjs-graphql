@@ -30,17 +30,14 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          key: node-modules-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
           path: "**/node_modules"
 
-      - name: Install PNPM 9
-        run: npm i -g pnpm@9
-
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: npm ci
 
       - name: Enter prerelease mode
-        run: pnpm changeset pre enter next || true
+        run: npm changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -55,7 +52,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
+          publish: npm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -91,17 +88,14 @@ jobs:
         env:
           cache-name: cache-node-modules
         with:
-          key: node-modules-${{ hashFiles('package.json') }}-${{ hashFiles('pnpm-lock.yaml') }}
+          key: node-modules-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
           path: "**/node_modules"
 
-      - name: Install PNPM 9
-        run: npm i -g pnpm@9
-
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: npm ci
 
       - name: Enter prerelease mode
-        run: pnpm changeset pre enter next || true
+        run: npm changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -116,7 +110,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
+          publish: npm changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

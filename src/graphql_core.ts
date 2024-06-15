@@ -77,7 +77,7 @@ export class GraphqlCore {
         // @ts-ignore
         DateTime: DateTimeScalar,
       },
-    })
+    }).catch((error) => console.error(error))
     return ctx.response.json(result)
   }
 
