@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
-import { ID, registerEnumType } from '../../src/scalars/index'
-import { BaseModel } from '@adonisjs/lucid/orm'
-import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import { BaseModel, beforeSave } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import Post from './post.js'
-import { Property } from '../../src/decorators'
+import hash from '@adonisjs/core/services/hash'
+import { ID, registerEnumType } from '../../src/scalars/index.js'
+import { Property, InputType } from '../../src/decorators/index.js'
+import { PaginationMetadata } from '../common/object_types.js'
 
 export enum AccountStatus {
   PENDING = 'pending',
@@ -23,6 +24,37 @@ registerEnumType(AccountStatus, {
     },
   },
 })
+
+@InputType()
+export class CreateUserInput {
+  @Property()
+  declare name: string
+
+  @Property()
+  declare email: string
+
+  @Property()
+  declare password: string
+}
+
+@InputType()
+export class UpdateUserInput {
+  @Property({ nullable: true })
+  declare name: string
+
+  @Property({ nullable: true })
+  declare email: string
+
+  @Property({ nullable: true })
+  declare password: string
+}
+export class UserPagination {
+  @Property({ type: () => PaginationMetadata })
+  declare meta: PaginationMetadata
+
+  @Property({ type: () => [User] })
+  declare data: User[]
+}
 
 export default class User extends BaseModel {
   @Property({
@@ -57,8 +89,13 @@ export default class User extends BaseModel {
   @Property.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
 
-  static accessTokens = DbAccessTokensProvider.forModel(User)
-
   @Property.hasMany(() => Post)
   declare posts: HasMany<typeof Post>
+
+  @beforeSave()
+  static async hashPassword(user: User) {
+    if (user.$dirty.password) {
+      user.password = await hash.make(user.password)
+    }
+  }
 }

@@ -1,21 +1,20 @@
-import User from '../models/user'
-import { Arg, Mutation, Query, ID, Parent, Property, Resolver } from '../../src/decorators/index'
-import { CreateUserInput, GetUserListOptions, UserPagination } from '../dtos/user_dto.js'
+import User, { CreateUserInput, UpdateUserInput, UserPagination } from '../models/user.js'
+import { Arg, Mutation, Query, Resolver } from '../../src/decorators/index.js'
 import { inject } from '@adonisjs/core'
-import Tag from '#models/tag'
-import { UserService } from '#services/user_service'
+import { GetListOptions } from '../common/input_types.js'
+import { ID } from '../../src/scalars/index.js'
 
 @inject()
 @Resolver(() => User)
 export default class UserResolver {
-  constructor(protected userService: UserService) {}
-
   @Query(() => UserPagination)
   async users(
-    @Arg('options', { type: () => GetUserListOptions, nullable: true }) options: GetUserListOptions
+    @Arg('options', { type: () => GetListOptions, nullable: true }) options: GetListOptions
   ): Promise<UserPagination> {
     const { page = 1, limit = 10 } = options || {}
-    const users = await this.userService.find({ page, limit })
+    const users = await User.query()
+      .orderBy(options.sort?.field || 'createdAt', options.sort?.order || 'desc')
+      .paginate(page, limit)
     return {
       meta: users.getMeta(),
       data: users,
@@ -24,19 +23,24 @@ export default class UserResolver {
 
   @Query(() => User)
   async user(@Arg('id', { type: () => ID }) id: number) {
-    const user = await this.userService.findOne(id)
+    const user = await User.query().where('id', id).first()
     return user
   }
 
   @Mutation(() => User)
   async createUser(@Arg('input') input: CreateUserInput) {
-    const newUser = await this.userService.create(input)
-    return newUser
+    const user = await User.create(input)
+    return user
   }
 
-  @Property.resolver(() => Tag)
-  async tag(@Parent() user: User) {
-    const tag = await Tag.findBy('id', 1)
-    return tag
+  @Mutation(() => User)
+  async updateUser(
+    @Arg('id', { type: () => ID }) id: number,
+    @Arg('input') input: UpdateUserInput
+  ) {
+    const user = await User.findOrFail(id)
+    user.merge(input)
+    await user.save()
+    return user
   }
 }

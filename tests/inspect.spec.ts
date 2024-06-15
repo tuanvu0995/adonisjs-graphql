@@ -2,9 +2,9 @@ import { test } from '@japa/runner'
 import { inspect } from '../src/inspect.js'
 import 'reflect-metadata'
 
-import { CreateUserInput, User } from './models/user.js'
-import { UserResolver } from './models/user_resolver.js'
+import User, { CreateUserInput } from './models/user.js'
 import { MetaKey } from '../src/metadata.js'
+import UserResolver from './resolvers/user_resolver.js'
 
 test.group('Inspect', () => {
   test('inspect definition properties', ({ assert }) => {
