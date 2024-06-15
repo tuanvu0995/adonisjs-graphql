@@ -2,7 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, manyToMany } from '@adonisjs/lucid/orm'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import Post from './post.js'
-import { ID, Property } from 'adonisjs-graphql'
+import { Property } from '../../src/decorators/index.js'
+import { ID } from '../../src/scalars/index.js'
 
 export default class Tag extends BaseModel {
   @Property({ isPrimary: true, type: () => ID })

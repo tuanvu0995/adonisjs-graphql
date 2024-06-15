@@ -30,6 +30,9 @@ export const defaultTo = <T>(value: T | null | undefined, defaultValue: T): T =>
   return shouldUseDefaultValue ? defaultValue : (value as T)
 }
 
+/**
+ * @summary Memoizes a function
+ */
 export function memoize<T extends Function>(func: T, resolver?: (...args: any[]) => any): T {
   if (typeof func !== 'function' || (resolver && typeof resolver !== 'function')) {
     throw new TypeError('FUNC_ERROR_TEXT')

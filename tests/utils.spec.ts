@@ -55,4 +55,17 @@ test.group('Utils', () => {
       utils.memoize(() => {}, 1 as any)
     }, TypeError)
   })
+
+  test('isConstructor with class', ({ assert }) => {
+    class Test {}
+    assert.isTrue(utils.isConstructor(Test))
+  })
+
+  test('isConstructor with function', ({ assert }) => {
+    assert.isFalse(utils.isConstructor(() => {}))
+  })
+
+  test('isConstructor with object', ({ assert }) => {
+    assert.isFalse(utils.isConstructor({}))
+  })
 })
