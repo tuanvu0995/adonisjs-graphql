@@ -43,16 +43,71 @@ Configure the package by running the following command:
 node ace configure adonisjs-graphql
 ```
 
-This will create a new `graphql.ts` file in the `config` directory, where you can define your schema, resolvers, and other settings.
+This will create a new `playground.html` file in the `public` directory, and a new `graphql.ts` file in the `config` directory.
 
 ## Usage
 
 Soon
 
+Note: You can look at to `app` directory to see the example.
+
+## Development
+
+To get started with development, clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/tuanvu0995/adonisjs-graphql.git
+cd adonisjs-graphql
+npm install
+```
+
+You can run the tests using the following command:
+
+```bash
+# Run all tests
+npm run test
+
+# Run unit tests
+npm run test unit
+
+# Run e2e tests
+npm run test e2e
+```
+
+To start the development server, run the following command:
+
+```bash
+npm run dev
+```
+
+This will start the AdonisJS server with the GraphQL playground enabled.
+
+Go to [http://localhost:3333/graphql](http://localhost:3333/graphql) to access the playground and start running queries.
+
 ## Contributing
 
-Soon
+Any contributions from the community are welcome.
+
+Find a bug, a typo, or something that’s not documented well? We’d love for you to open an issue telling us what we can improve! Follow the [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+We love your pull requests! Check out our Good First Issue and Help Wanted tags for good issues to tackle. Check out our contributors guide for more information.
+
+If you like what you see, star us on GitHub.
+
+## Progress
+
+| Status | Milestone              | Goals |   ETA    |
+| :----: | :--------------------- | :---: | :------: |
+|   ✅   | **Type and Field**     | 2 / 2 | May 2024 |
+|   ✅   | **Query and Mutation** | 2 / 2 | Jun 2024 |
+|   🚀   | **Relationship**       | 3 / 5 | Jun 2024 |
+|   🚀   | **Middleware**         | 0 / 1 | Jun 2024 |
+|   🚀   | **Subscription**       | 0 / 1 | Jul 2024 |
+|   🚀   | **Dataloader**         | 0 / 1 | Jul 2024 |
+|   🚀   | **Great Playground**   | 0 / 1 | Aug 2024 |
+
+Updated: Wed, 19 Jun 2024
 
 ## License
 
-This package is open-sourced software licensed under the [MIT license](license.md).
+This package is open-sourced software licensed under the [MIT license](https://raw.githubusercontent.com/tuanvu0995/adonisjs-graphql/main/LICENSE).
