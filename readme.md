@@ -1,6 +1,8 @@
 # adonisjs-graphql (WIP)
 
 [![codecov](https://codecov.io/github/tuanvu0995/adonisjs-graphql/graph/badge.svg?token=MS5XM1U2I1)](https://codecov.io/github/tuanvu0995/adonisjs-graphql)
+[![npm version](https://badge.fury.io/js/adonisjs-graphql.svg)](https://badge.fury.io/js/adonisjs-graphql)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/tuanvu0995/adonisjs-graphql/main/docs/img/adonis-graphql.png" width="280px" alt="Adonis Graphql">
