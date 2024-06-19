@@ -108,6 +108,10 @@ If you like what you see, star us on GitHub.
 
 Updated: Wed, 19 Jun 2024
 
+## Who is using adonisjs-graphql?
+
+- [TheDevLog.net](https://thedevlog.net) - A reddit clone.
+
 ## License
 
 This package is open-sourced software licensed under the [MIT license](https://raw.githubusercontent.com/tuanvu0995/adonisjs-graphql/main/LICENSE).
