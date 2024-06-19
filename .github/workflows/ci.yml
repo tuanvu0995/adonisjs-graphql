@@ -39,11 +39,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test unit
-        run: npm run test unit
-
-      - name: Test e2e
-        run: npm run test e2e
+      - name: Test
+        run: npm run test
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
