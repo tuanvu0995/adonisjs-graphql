@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Enter prerelease mode
-        run: npm changeset pre enter next || true
+        run: npm run changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -52,7 +52,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: npm changeset publish
+          publish: npm run changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
         run: npm ci
 
       - name: Enter prerelease mode
-        run: npm changeset pre enter next || true
+        run: npm run changeset pre enter next || true
 
       - name: Check should create release
         id: should-create-release
@@ -110,7 +110,7 @@ jobs:
         if: steps.should-create-release.outputs.RESULT == 'true'
         uses: changesets/action@v1
         with:
-          publish: npm changeset publish
+          publish: npm run changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
