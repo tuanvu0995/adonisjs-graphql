@@ -17,9 +17,6 @@ export default class Post extends BaseModel {
   declare title: string
 
   @Property()
-  declare slug: string
-
-  @Property()
   declare content: string
 
   @Property()

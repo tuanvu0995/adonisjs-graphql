@@ -1,4 +1,9 @@
-import User, { CreateUserInput, UpdateUserInput, UserPagination } from '../models/user.js'
+import User, {
+  AccountStatus,
+  CreateUserInput,
+  UpdateUserInput,
+  UserPagination,
+} from '../models/user.js'
 import { Arg, Mutation, Query, Resolver } from '../../src/decorators/index.js'
 import { inject } from '@adonisjs/core'
 import { GetListOptions } from '../common/input_types.js'
@@ -29,7 +34,10 @@ export default class UserResolver {
 
   @Mutation(() => User)
   async createUser(@Arg('input') input: CreateUserInput) {
-    const user = await User.create(input)
+    const user = await User.create({
+      ...input,
+      status: AccountStatus.ACTIVE,
+    })
     return user
   }
 

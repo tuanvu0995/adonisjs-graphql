@@ -40,7 +40,7 @@ export default defineConfig({
   | List of modules to import before starting the application.
   |
   */
-  preloads: [],
+  preloads: [() => import('./start/kernel.js')],
 
   /*
   |--------------------------------------------------------------------------
