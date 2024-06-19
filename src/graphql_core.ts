@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises'
 import { GraphQLSchema, graphql } from 'graphql'
-import { HttpContext } from '@adonisjs/core/http'
+import type { HttpContext } from '@adonisjs/core/http'
 import { ApplicationService, LoggerService } from '@adonisjs/core/types'
 import { GraphQLConfig } from './types.js'
 import Schema from './schema/schema.js'
