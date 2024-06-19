@@ -1,5 +1,5 @@
 import { test } from '@japa/runner'
-import * as utils from '../src/utils.js'
+import * as utils from '../../src/utils.js'
 
 test.group('Utils', () => {
   test('isNil', ({ assert }) => {

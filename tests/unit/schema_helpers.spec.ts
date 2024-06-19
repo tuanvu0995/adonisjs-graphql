@@ -1,5 +1,5 @@
 import { test } from '@japa/runner'
-import * as helpers from '../src/schema/helpers.js'
+import * as helpers from '../../src/schema/helpers.js'
 import { GraphQLString } from 'graphql'
 
 test.group('Schema Helpers', () => {

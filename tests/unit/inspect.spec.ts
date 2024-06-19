@@ -1,10 +1,10 @@
 import { test } from '@japa/runner'
-import { inspect } from '../src/inspect.js'
+import { inspect } from '../../src/inspect.js'
 import 'reflect-metadata'
 
-import User, { CreateUserInput } from './models/user.js'
-import { MetaKey } from '../src/metadata.js'
-import UserResolver from './resolvers/user_resolver.js'
+import User, { CreateUserInput } from '../models/user.js'
+import { MetaKey } from '../../src/metadata.js'
+import UserResolver from '../../app/resolvers/user_resolver.js'
 
 test.group('Inspect', () => {
   test('inspect definition properties', ({ assert }) => {
@@ -23,6 +23,7 @@ test.group('Inspect', () => {
 
   test('inspect mutation properties', ({ assert }) => {
     const properties = inspect(UserResolver).mutationProperties
+    console.log(properties)
     assert.isArray(properties)
     assert.lengthOf(properties, 1)
     assert.equal(properties.map((p) => p.name).join(','), 'createUser')
