@@ -16,7 +16,7 @@ export default class UserResolver {
   async users(
     @Arg('options', { type: () => GetListOptions, nullable: true }) options: GetListOptions
   ): Promise<UserPagination> {
-    const { page = 1, limit = 10 } = options || {}
+    const { page = 1, limit = 10 } = options
     const users = await User.query()
       .orderBy(options.sort?.field || 'createdAt', options.sort?.order || 'desc')
       .paginate(page, limit)

@@ -48,26 +48,26 @@ class InspectedDefinition {
     return this.getProperties(MetaKey.Mutation)
   }
 
-  get subscriptionProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.Subscription)
-  }
+  // get subscriptionProperties(): HydratedProperty[] {
+  //   return this.getProperties(MetaKey.Subscription)
+  // }
 
   get inputProperties(): HydratedProperty[] {
     return this.getProperties(MetaKey.Property, { isInput: true })
   }
 
-  get propertyResolvers(): HydratedProperty[] {
-    return this.getProperties(MetaKey.PropertyResolver)
-  }
+  // get propertyResolvers(): HydratedProperty[] {
+  //   return this.getProperties(MetaKey.PropertyResolver)
+  // }
 
-  for(propertyName: string | symbol): HydratedProperty {
-    const designType = Reflect.getMetadata(
-      MetaKey.DesignType,
-      this.definition.prototype,
-      propertyName
-    )
-    return new HydratedProperty(this.definition, propertyName as string, designType)
-  }
+  // for(propertyName: string | symbol): HydratedProperty {
+  //   const designType = Reflect.getMetadata(
+  //     MetaKey.DesignType,
+  //     this.definition.prototype,
+  //     propertyName
+  //   )
+  //   return new HydratedProperty(this.definition, propertyName as string, designType)
+  // }
 }
 
 export const inspect = util.memoize((definition: Definition) => new InspectedDefinition(definition))
