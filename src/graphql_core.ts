@@ -54,10 +54,6 @@ export class GraphqlCore {
         .flat()
     )
 
-    if (!definitions.length) {
-      throw new Error('[GraphQL] definitions are missing')
-    }
-
     return definitions
   }
 

@@ -13,9 +13,11 @@ import Schema from './schema.js'
 
 export function getInputType(arg: {
   type: () => any
-}): GraphQLNamedType | GraphQLNamedType[] | undefined | [] {
-  const getType = (inputType: any) => {
-    if (inputType instanceof GraphQLScalarType) return inputType
+}): GraphQLNamedType | GraphQLNamedType[] | undefined {
+  const getType = (inputType: any): GraphQLNamedType | undefined => {
+    if (inputType instanceof GraphQLScalarType) {
+      return inputType
+    }
 
     switch (inputType.name) {
       case 'String':
@@ -28,25 +30,22 @@ export function getInputType(arg: {
         return Schema.getType(inputType.__name__ || inputType.name)
     }
   }
-  const type = arg.type() as any | any[]
+
+  const type = arg.type()
 
   if (Array.isArray(type)) {
-    return type.map(getType).filter((t) => typeof t !== 'undefined') as any
+    return type.map(getType).filter((t): t is GraphQLNamedType => t !== undefined)
   }
   return getType(type)
 }
 
 export function getPropretyType(options: PropertyMetaOptions) {
-  if (!options) return null
   const definedType = getInputType(options)
-  const isListType = Array.isArray(definedType)
-  if (!definedType || (isListType && !definedType[0])) {
+  if (!definedType || (Array.isArray(definedType) && !definedType[0])) {
     return null
   }
 
-  const namedType = isListType ? new GraphQLList(definedType[0]) : definedType
-  if (!namedType) return null
-
+  const namedType = Array.isArray(definedType) ? new GraphQLList(definedType[0]) : definedType
   return options.nullable ? namedType : new GraphQLNonNull(namedType)
 }
 
@@ -54,14 +53,13 @@ export function createListType(type: GraphQLNamedType) {
   return new GraphQLList(type)
 }
 
-export function getPrameters(parameters: ArgMetaOptions[], context: HttpContext, args: any) {
+export function getPrameters(parameters: ArgMetaOptions[], context: HttpContext, args: any = {}) {
   parameters.sort((a, b) => a.index - b.index)
   const res = parameters.map((param: any) => {
-    if (!param.name) return args
     if (param.name === 'context') {
       return context
     }
-    return (args || {})[param.name] || param.defaultValue || undefined
+    return args[param.name] || param.defaultValue || undefined
   })
   return res
 }

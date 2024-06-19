@@ -9,7 +9,12 @@ export function registerEnumType(
     valuesConfig?: Record<string, { description?: string; deprecationReason?: string }>
   }
 ): void {
+  if (typeof enumObj !== 'object') {
+    throw new Error('Cannot register a non-object as enum')
+  }
+
   const values = Object.values(enumObj) as string[]
+
   if (values.length === 0) {
     throw new Error('Cannot register an empty object as enum')
   }
