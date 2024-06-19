@@ -9,7 +9,8 @@ class InspectedDefinition {
 
   private getPropertiesUncached(metaKey: MetaKey = MetaKey.Property): HydratedProperty[] {
     const result: HydratedProperty[] = []
-    if (metaKey === MetaKey.InputType) {
+    const options = Metadata.for(this.definition).get(MetaKey.Definition)
+    if (options?.isInputType) {
       for (const propertyName in Metadata.getProperties(this.definition)) {
         const designType = Reflect.getMetadata(
           MetaKey.DesignType,
@@ -50,7 +51,7 @@ class InspectedDefinition {
   // }
 
   get inputProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.InputType)
+    return this.getProperties(MetaKey.Property)
   }
 
   get propertyResolvers(): HydratedProperty[] {

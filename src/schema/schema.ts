@@ -178,7 +178,12 @@ export default class Schema {
 
   private static buildQuery(queries: HydratedProperty[], metaKey: MetaKey = MetaKey.Query) {
     if (!queries.length) return null
-    const fields = queries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
+    const accepetedQueries = queries.filter((query) => {
+      const options = Metadata.for(query.definition).get(MetaKey.Definition)
+      return options.isResolver
+    })
+
+    const fields = accepetedQueries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
 
       const queryArgs: ArgMetaOptions[] = query.get(MetaKey.ParamTypes) || []

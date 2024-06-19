@@ -37,6 +37,7 @@ export function getInputType(arg: {
 }
 
 export function getPropretyType(options: PropertyMetaOptions) {
+  if (!options) return null
   const definedType = getInputType(options)
   const isListType = Array.isArray(definedType)
   if (!definedType || (isListType && !definedType[0])) {

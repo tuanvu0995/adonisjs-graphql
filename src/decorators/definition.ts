@@ -42,7 +42,7 @@ type InputTypeOptions = {
  */
 export function InputType(options?: InputTypeOptions): ClassDecorator {
   return (target: any) => {
-    Metadata.for(target).set(MetaKey.InputType, options)
+    Definition({ ...options, isInputType: true })(target)
   }
 }
 
