@@ -104,10 +104,13 @@ If you like what you see, star us on GitHub.
 |   ✅   | **Type and Field**     | 2 / 2 | May 2024 |
 |   ✅   | **Query and Mutation** | 2 / 2 | Jun 2024 |
 |   🚀   | **Relationship**       | 3 / 5 | Jun 2024 |
-|   🚀   | **Middleware**         | 0 / 1 | Jun 2024 |
+|   😃   | **Middleware**         | 0 / 1 | Jun 2024 |
 |   😃   | **Subscription**       | 0 / 1 | Jul 2024 |
 |   😃   | **Dataloader**         | 0 / 1 | Jul 2024 |
-|   🚀   | **Great Playground**   | 0 / 1 | Aug 2024 |
+|   😃   | **Directives**         | 0 / 1 | Aug 2024 |
+|   😃   | **Extensions**         | 0 / 1 | Aug 2024 |
+|   😃   | **Great Playground**   | 0 / 1 | Aug 2024 |
+|   😃   | **More Improvements**  | 0 / - | Sep 2024 |
 
 Updated: Wed, 19 Jun 2024
 
