@@ -61,6 +61,7 @@ To get started with development, clone the repository and install the dependenci
 git clone https://github.com/tuanvu0995/adonisjs-graphql.git
 cd adonisjs-graphql
 npm install
+cp .env.example .env
 ```
 
 You can run the tests using the following command:
