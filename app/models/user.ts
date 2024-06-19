@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeSave } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeSave, column } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import Post from './post.js'
 import hash from '@adonisjs/core/services/hash'
@@ -75,9 +75,7 @@ export default class User extends BaseModel {
   @Property()
   declare email: string
 
-  @Property({
-    serializeAs: null,
-  })
+  @column({ serializeAs: null })
   declare password: string
 
   @Property({ type: () => AccountStatus })

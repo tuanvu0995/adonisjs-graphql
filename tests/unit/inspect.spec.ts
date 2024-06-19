@@ -1,6 +1,5 @@
 import { test } from '@japa/runner'
 import { inspect } from '../../src/inspect.js'
-import 'reflect-metadata'
 
 import User, { CreateUserInput } from '../../app/models/user.js'
 import { MetaKey } from '../../src/metadata.js'
@@ -13,7 +12,7 @@ test.group('Inspect', () => {
     assert.lengthOf(properties, 9)
     assert.equal(
       properties.map((p) => p.name).join(','),
-      'id,fullName,name,email,password,status,createdAt,updatedAt,posts'
+      'id,fullName,name,email,status,createdAt,updatedAt,posts,avatar'
     )
   })
 
@@ -31,13 +30,12 @@ test.group('Inspect', () => {
     assert.equal(properties.map((p) => p.name).join(','), 'createUser,updateUser')
   })
 
-  // test('inspect property resolver', ({ assert }) => {
-  //   const properties = inspect(UserResolver).propertyResolvers
-  //   console.log('properties', properties)
-  //   assert.isArray(properties)
-  //   assert.lengthOf(properties, 0)
-  //   assert.equal(properties.map((p) => p.name).join(','), 'avatar')
-  // })
+  test('inspect property resolver', ({ assert }) => {
+    const properties = inspect(UserResolver).propertyResolvers
+    assert.isArray(properties)
+    assert.lengthOf(properties, 1)
+    assert.equal(properties.map((p) => p.name).join(','), 'avatar')
+  })
 
   test('inspect input properties', ({ assert }) => {
     const properties = inspect(CreateUserInput).inputProperties

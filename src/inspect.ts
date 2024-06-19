@@ -7,12 +7,9 @@ type ClassType = any
 class InspectedDefinition {
   constructor(private definition: Definition) {}
 
-  private getPropertiesUncached(
-    metaKey: MetaKey = MetaKey.Property,
-    options?: { isInput: boolean }
-  ): HydratedProperty[] {
+  private getPropertiesUncached(metaKey: MetaKey = MetaKey.Property): HydratedProperty[] {
     const result: HydratedProperty[] = []
-    if (options?.isInput) {
+    if (metaKey === MetaKey.InputType) {
       for (const propertyName in Metadata.getProperties(this.definition)) {
         const designType = Reflect.getMetadata(
           MetaKey.DesignType,
@@ -53,12 +50,12 @@ class InspectedDefinition {
   // }
 
   get inputProperties(): HydratedProperty[] {
-    return this.getProperties(MetaKey.Property, { isInput: true })
+    return this.getProperties(MetaKey.InputType)
   }
 
-  // get propertyResolvers(): HydratedProperty[] {
-  //   return this.getProperties(MetaKey.PropertyResolver)
-  // }
+  get propertyResolvers(): HydratedProperty[] {
+    return this.getProperties(MetaKey.PropertyResolver)
+  }
 
   // for(propertyName: string | symbol): HydratedProperty {
   //   const designType = Reflect.getMetadata(

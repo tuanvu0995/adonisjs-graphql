@@ -6,7 +6,7 @@ import { getPrameters, getPropretyType } from './helpers.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { HydratedProperty, inspect } from '../inspect.js'
 import { createRelation } from './create_relation.js'
-import { createResolver } from './create_resolver.js'
+import { createFieldResolver } from './create_field_resolver.js'
 import { createField } from './create_field.js'
 
 export default class Schema {
@@ -152,7 +152,7 @@ export default class Schema {
          * Create a field resolver when the property is a resolver
          */
         if (options.isResolver) {
-          createResolver(acc, options, fieldType, property)
+          createFieldResolver(acc, options, fieldType, property)
           return acc
         }
 

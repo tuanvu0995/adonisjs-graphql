@@ -4,7 +4,7 @@ import User, {
   UpdateUserInput,
   UserPagination,
 } from '../models/user.js'
-import { Arg, Mutation, Query, Resolver } from '../../src/decorators/index.js'
+import { Arg, Mutation, Parent, Property, Query, Resolver } from '../../src/decorators/index.js'
 import { inject } from '@adonisjs/core'
 import { GetListOptions } from '../common/input_types.js'
 import { ID } from '../../src/scalars/index.js'
@@ -50,5 +50,10 @@ export default class UserResolver {
     user.merge(input)
     await user.save()
     return user
+  }
+
+  @Property.resolver(() => String)
+  async avatar(@Parent() user: User): Promise<string> {
+    return 'https://api.adorable.io/avatars/150/' + user.email + '.png'
   }
 }

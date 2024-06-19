@@ -4,7 +4,7 @@ import { ArgMetaOptions } from '../types.js'
 import { MetaKey } from '../metadata.js'
 import { getPrameters } from './helpers.js'
 
-export function createResolver(acc: any, options: any, fieldType: any, property: any) {
+export function createFieldResolver(acc: any, options: any, fieldType: any, property: any) {
   const resolverArgs: ArgMetaOptions[] = property.get(MetaKey.ParamTypes) || []
   acc[property.name] = {
     type: fieldType,

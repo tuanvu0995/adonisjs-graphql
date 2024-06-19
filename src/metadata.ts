@@ -8,6 +8,7 @@ export enum MetaKey {
   DesignType = 'design:type',
   ParamTypes = 'design:paramtypes',
   ReturnType = 'design:returntype',
+  InputType = 'design:inputtype',
   Definition = 'Definition',
   Property = 'Property',
   PropertyResolver = 'PropertyResolver',
