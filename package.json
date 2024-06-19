@@ -1,6 +1,6 @@
 {
-  "name": "adonisjs-graphql",
-  "description": "",
+  "name": "@thedevlog/adonis-graphql",
+  "description": "A lightweight and straightforward package specifically designed for the AdonisJS web framework",
   "version": "0.0.1-next.0",
   "engines": {
     "node": ">=20.6.0"

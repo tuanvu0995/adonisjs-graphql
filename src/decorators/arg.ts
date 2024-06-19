@@ -15,6 +15,11 @@ type ArgOptions = {
 export function Arg(name: string, options?: ArgOptions) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
     const paramTypes = Reflect.getOwnMetadata(MetaKey.ParamTypes, target, propertyKey)
+    console.log({
+      name: target.constructor.name,
+      propertyKey,
+      paramTypes,
+    })
     Metadata.for(target)
       .with(propertyKey)
       .set(MetaKey.ParamTypes, {

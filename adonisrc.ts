@@ -29,6 +29,7 @@ export default defineConfig({
       environment: ['repl', 'test'],
     },
     () => import('@adonisjs/lucid/database_provider'),
+    () => import('./providers/graphql_provider.js'),
   ],
 
   /*
