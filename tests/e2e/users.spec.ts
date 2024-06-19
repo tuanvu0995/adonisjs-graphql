@@ -41,6 +41,7 @@ test.group('Users', () => {
           id: userId,
           name: 'John Doe',
           email: 'johndoe@example.com',
+          avatar: 'https://api.adorable.io/avatars/150/johndoe@example.com.png',
         },
       },
     })

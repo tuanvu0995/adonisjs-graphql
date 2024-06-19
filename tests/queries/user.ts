@@ -26,6 +26,7 @@ query GetUser($id: ID!) {
     id
     email
     name
+    avatar
   }
 }
 `

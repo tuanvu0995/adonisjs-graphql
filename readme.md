@@ -3,7 +3,7 @@
 [![codecov](https://codecov.io/github/tuanvu0995/adonisjs-graphql/graph/badge.svg?token=MS5XM1U2I1)](https://codecov.io/github/tuanvu0995/adonisjs-graphql)
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/tuanvu0995/adonisjs-graphql/main/docs/img/adonis-graphql.png" width="400px" alt="Adonis Graphql">
+<img src="https://raw.githubusercontent.com/tuanvu0995/adonisjs-graphql/main/docs/img/adonis-graphql.png" width="280px" alt="Adonis Graphql">
 </p>
 
 ## Introduction

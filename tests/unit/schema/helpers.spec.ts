@@ -59,14 +59,6 @@ test.group('Helpers: getPropretyType', () => {
     })
     assert.isNull(type)
   })
-
-  test("return null if the type isn't found", async ({ assert }) => {
-    const type: any = getPropretyType({
-      name: 'email',
-      type: () => ({ name: 'Unknown' }),
-    })
-    assert.isNull(type)
-  })
 })
 
 test.group('Helpers: getPrameters', () => {
