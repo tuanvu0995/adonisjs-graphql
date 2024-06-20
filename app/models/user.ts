@@ -97,7 +97,9 @@ export default class User extends BaseModel {
   @Property.hasMany(() => Post)
   declare posts: HasMany<typeof Post>
 
-  @Property.hasOne(() => Profile)
+  @Property.hasOne(() => Profile, {
+    nullable: true,
+  })
   declare profile: HasOne<typeof Profile>
 
   @beforeSave()

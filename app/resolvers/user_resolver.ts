@@ -19,6 +19,7 @@ import { inject } from '@adonisjs/core'
 import { GetListOptions } from '../common/input_types.js'
 import { ID } from '../../src/scalars/index.js'
 import type { HttpContext } from '@adonisjs/core/http'
+import Profile, { UpdateProfileInput } from '../models/profile.js'
 
 @inject()
 @Resolver(() => User)
@@ -62,6 +63,19 @@ export default class UserResolver {
     user.merge(input)
     await user.save()
     return user
+  }
+
+  @Mutation(() => Profile)
+  async updateProfile(@Arg('input') input: UpdateProfileInput) {
+    let profile = await Profile.query().where('user_id', input.userId).first()
+    if (!profile) {
+      profile = await Profile.create(input as any)
+    } else {
+      profile.merge(input as any)
+      await profile.save()
+    }
+
+    return profile
   }
 
   @Property.resolver(() => String)

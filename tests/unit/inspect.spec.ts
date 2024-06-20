@@ -26,8 +26,8 @@ test.group('Inspect', () => {
   test('inspect mutation properties', ({ assert }) => {
     const properties = inspect(UserResolver).mutationProperties
     assert.isArray(properties)
-    assert.lengthOf(properties, 2)
-    assert.equal(properties.map((p) => p.name).join(','), 'createUser,updateUser')
+    assert.lengthOf(properties, 3)
+    assert.equal(properties.map((p) => p.name).join(','), 'createUser,updateUser,updateProfile')
   })
 
   test('inspect property resolver', ({ assert }) => {

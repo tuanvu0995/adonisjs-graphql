@@ -1,7 +1,12 @@
 import { test } from '@japa/runner'
 import { sendGraphqlRequest } from './utils.js'
-import { CREATE_USER, GET_USER_WITH_POSTS } from '../queries/user.js'
-import { CREATE_POST, GET_POST_WITH_AUTHOR } from '../queries/post.js'
+import {
+  CREATE_USER,
+  GET_USER_WITH_POSTS,
+  GET_USER_WITH_PROFILE,
+  UPDATE_PROFILE,
+} from '../queries/user.js'
+import { CREATE_POST, GET_POST_WITH_AUTHOR, GET_POST_WITH_TAGS } from '../queries/post.js'
 import testUtils from '@adonisjs/core/services/test_utils'
 
 test.group('Relations', (group) => {
@@ -25,6 +30,7 @@ test.group('Relations', (group) => {
         title: 'Hello World',
         content: 'This is my first post',
         userId,
+        tags: ['adonisjs', 'graphql'],
       },
     })
 
@@ -67,6 +73,60 @@ test.group('Relations', (group) => {
             id: userId,
             name: 'John Doe',
           },
+        },
+      },
+    })
+  })
+
+  test('has one', async ({ client }) => {
+    await sendGraphqlRequest(client, UPDATE_PROFILE, {
+      input: {
+        userId: userId,
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+    })
+
+    const response = await sendGraphqlRequest(client, GET_USER_WITH_PROFILE, {
+      id: userId,
+    })
+
+    response.assertBodyContains({
+      data: {
+        user: {
+          id: userId,
+          name: 'John Doe',
+          profile: {
+            id: '1',
+            firstName: 'John',
+            lastName: 'Doe',
+          },
+        },
+      },
+    })
+  })
+
+  test('many to many', async ({ client }) => {
+    const response = await sendGraphqlRequest(client, GET_POST_WITH_TAGS, {
+      id: postId,
+    })
+    response.assertBodyContains({
+      data: {
+        post: {
+          id: postId,
+          title: 'Hello World',
+          tags: [
+            {
+              id: '1',
+              name: 'adonisjs',
+              slug: 'adonisjs',
+            },
+            {
+              id: '2',
+              name: 'graphql',
+              slug: 'graphql',
+            },
+          ],
         },
       },
     })
