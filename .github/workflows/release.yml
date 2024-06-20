@@ -28,7 +28,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           key: node-modules-${{ hashFiles('package.json') }}-${{ hashFiles('package-lock.json') }}
-          path: "**/node_modules"
+          path: '**/node_modules'
 
       - name: Install dependencies
         run: npm ci
