@@ -9,18 +9,18 @@ test.group('Inspect', () => {
   test('inspect definition properties', ({ assert }) => {
     const properties = inspect(User).getProperties()
     assert.isArray(properties)
-    assert.lengthOf(properties, 9)
+    assert.lengthOf(properties, 10)
     assert.equal(
       properties.map((p) => p.name).join(','),
-      'id,fullName,name,email,status,createdAt,updatedAt,posts,avatar'
+      'id,fullName,name,email,status,createdAt,updatedAt,posts,profile,avatar'
     )
   })
 
   test('inspect query properties', ({ assert }) => {
     const properties = inspect(UserResolver).queryProperties
     assert.isArray(properties)
-    assert.lengthOf(properties, 2)
-    assert.equal(properties.map((p) => p.name).join(','), 'users,user')
+    assert.lengthOf(properties, 3)
+    assert.equal(properties.map((p) => p.name).join(','), 'users,user,userByEmail')
   })
 
   test('inspect mutation properties', ({ assert }) => {

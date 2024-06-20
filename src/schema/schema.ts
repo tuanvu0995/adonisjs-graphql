@@ -186,8 +186,13 @@ export default class Schema {
     const fields = accepetedQueries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
 
+      const internalArgNames = ['context']
+
       const queryArgs: ArgMetaOptions[] = query.get(MetaKey.ParamTypes) || []
-      const args = queryArgs.reduce((acc2: any, arg: ArgMetaOptions) => {
+      const internalArgs = queryArgs.filter((arg) => internalArgNames.includes(arg.name))
+      const externalArgs = queryArgs.filter((arg) => !internalArgNames.includes(arg.name))
+
+      const args = externalArgs.reduce((acc2: any, arg: ArgMetaOptions) => {
         const paramType = this.getOrCreateType(arg)
         acc2[arg.name] = { type: paramType }
         return acc2
@@ -200,7 +205,7 @@ export default class Schema {
         args,
         resolve: async (_: any, _args: any, context: HttpContext) => {
           const resolver = await app.container.make(query.definition)
-          const parameters = getPrameters(queryArgs, context, _args)
+          const parameters = getPrameters([...externalArgs, ...internalArgs], context, _args)
           return resolver[options.resolve.name](...parameters)
         },
       }

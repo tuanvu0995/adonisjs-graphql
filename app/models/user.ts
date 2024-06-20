@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
 import { BaseModel, beforeSave, column } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne } from '@adonisjs/lucid/types/relations'
 import Post from './post.js'
 import hash from '@adonisjs/core/services/hash'
 import { ID, registerEnumType } from '../../src/scalars/index.js'
 import { Property, InputType } from '../../src/decorators/index.js'
 import { PaginationMetadata } from '../common/object_types.js'
+import Profile from './profile.js'
 
 export enum AccountStatus {
   PENDING = 'pending',
@@ -56,6 +57,12 @@ export class UserPagination {
   declare data: User[]
 }
 
+@InputType()
+export class GetUserByEmailInput {
+  @Property()
+  declare email: string
+}
+
 export default class User extends BaseModel {
   @Property({
     isPrimary: true,
@@ -89,6 +96,9 @@ export default class User extends BaseModel {
 
   @Property.hasMany(() => Post)
   declare posts: HasMany<typeof Post>
+
+  @Property.hasOne(() => Profile)
+  declare profile: HasOne<typeof Profile>
 
   @beforeSave()
   static async hashPassword(user: User) {
