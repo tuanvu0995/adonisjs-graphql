@@ -1,11 +1,11 @@
 import { test } from '@japa/runner'
 import { sendGraphqlRequest } from './utils.js'
 import { CREATE_USER, GET_USER_WITH_POSTS } from '../queries/user.js'
-import { CREATE_POST } from '../queries/post.js'
+import { CREATE_POST, GET_POST_WITH_AUTHOR } from '../queries/post.js'
 import testUtils from '@adonisjs/core/services/test_utils'
 
 test.group('Relations', (group) => {
-  group.each.setup(() => testUtils.db().truncate())
+  group.setup(() => testUtils.db().truncate())
 
   let userId: number
   let postId: number
@@ -47,6 +47,26 @@ test.group('Relations', (group) => {
               content: 'This is my first post',
             },
           ],
+        },
+      },
+    })
+  })
+
+  test('belongs to', async ({ client }) => {
+    const response = await sendGraphqlRequest(client, GET_POST_WITH_AUTHOR, {
+      id: postId,
+    })
+
+    response.assertBodyContains({
+      data: {
+        post: {
+          id: postId,
+          title: 'Hello World',
+          content: 'This is my first post',
+          user: {
+            id: userId,
+            name: 'John Doe',
+          },
         },
       },
     })
