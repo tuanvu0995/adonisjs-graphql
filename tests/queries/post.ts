@@ -25,3 +25,16 @@ query GetPost($id: ID!) {
   }
 }
 `
+export const GET_POST_WITH_TAGS = `
+query GetPost($id: ID!) {
+  post(id: $id) {
+    id
+    title
+    tags {
+      id
+      name
+      slug
+    }
+  }
+}
+`

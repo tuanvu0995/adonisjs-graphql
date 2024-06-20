@@ -19,6 +19,16 @@ mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
   }
 }
 `
+export const UPDATE_PROFILE = `
+mutation UpdateProfile($input: UpdateProfileInput!) {
+  updateProfile(input: $input) {
+    id
+    userId
+    firstName
+    lastName
+  }
+}
+`
 
 export const GET_USER = `
 query GetUser($id: ID!) {
@@ -46,7 +56,19 @@ query GetUserWithPosts($id: ID!) {
     }
   }
 }
-
+`
+export const GET_USER_WITH_PROFILE = `
+query GetUserWithProfile($id: ID!) {
+  user(id: $id) {
+    id
+    name
+    profile {
+      id
+      firstName
+      lastName
+    }
+  }
+}
 `
 
 export const GET_USERS = `
