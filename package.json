@@ -95,7 +95,11 @@
       "html"
     ],
     "exclude": [
-      "tests/**"
+      "tests/**",
+      "app/**",
+      "bin/**",
+      "database/**",
+      "config/**"
     ]
   }
 }

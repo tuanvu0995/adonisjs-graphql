@@ -45,16 +45,3 @@ export function InputType(options?: InputTypeOptions): ClassDecorator {
     Definition({ ...options, isInputType: true })(target)
   }
 }
-
-type ArgTypeOptions = {
-  description?: string
-}
-/**
- * @summary Decorator for defining a class as a GraphQL argument type
- * @param options - Options for the argument type
- */
-export function ArgsType(options?: ArgTypeOptions): ClassDecorator {
-  return (target: any) => {
-    Definition({ ...options, isArgType: true })(target)
-  }
-}

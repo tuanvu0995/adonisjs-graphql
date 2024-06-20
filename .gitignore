@@ -12,4 +12,5 @@ dist
 yarn.lock
 shrinkwrap.yaml
 *.sqlite3
+*.sqlite
 .env

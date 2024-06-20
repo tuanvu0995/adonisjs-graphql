@@ -1,13 +1,24 @@
 import User, {
   AccountStatus,
   CreateUserInput,
+  GetUserByEmailInput,
   UpdateUserInput,
   UserPagination,
 } from '../models/user.js'
-import { Arg, Mutation, Parent, Property, Query, Resolver } from '../../src/decorators/index.js'
+import {
+  Arg,
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Property,
+  Query,
+  Resolver,
+} from '../../src/decorators/index.js'
 import { inject } from '@adonisjs/core'
 import { GetListOptions } from '../common/input_types.js'
 import { ID } from '../../src/scalars/index.js'
+import type { HttpContext } from '@adonisjs/core/http'
 
 @inject()
 @Resolver(() => User)
@@ -44,7 +55,8 @@ export default class UserResolver {
   @Mutation(() => User)
   async updateUser(
     @Arg('id', { type: () => ID }) id: number,
-    @Arg('input') input: UpdateUserInput
+    @Arg('input') input: UpdateUserInput,
+    @Context() _ctx: HttpContext
   ) {
     const user = await User.findOrFail(id)
     user.merge(input)
@@ -55,5 +67,12 @@ export default class UserResolver {
   @Property.resolver(() => String)
   async avatar(@Parent() user: User): Promise<string> {
     return 'https://api.adorable.io/avatars/150/' + user.email + '.png'
+  }
+
+  @Query(() => User)
+  async userByEmail(@Args() args: GetUserByEmailInput, @Context() _ctx: HttpContext) {
+    const email = args.email
+    const user = await User.findBy('email', email)
+    return user
   }
 }

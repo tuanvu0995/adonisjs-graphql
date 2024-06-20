@@ -1,3 +1,4 @@
+import { GraphQLObjectType } from 'graphql'
 import Metadata, { MetaKey } from '../metadata.js'
 import { Nullable } from '../types.js'
 
@@ -36,11 +37,16 @@ export type ArgsOptions = {
  */
 export function Args(defaultValues?: ArgsOptions) {
   return (target: any, propertyKey: string, parameterIndex: number) => {
-    Metadata.for(target).with(propertyKey).set(MetaKey.ParamTypes, {
-      index: parameterIndex,
-      name: 'args',
-      defaultValues,
-    })
+    const paramTypes = Reflect.getOwnMetadata(MetaKey.ParamTypes, target, propertyKey)
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(MetaKey.ParamTypes, {
+        index: parameterIndex,
+        name: 'args',
+        defaultValues,
+        /* c8 ignore next */
+        type: () => paramTypes[parameterIndex],
+      })
   }
 }
 
@@ -49,10 +55,14 @@ export function Args(defaultValues?: ArgsOptions) {
  */
 export function Context() {
   return (target: any, propertyKey: string, parameterIndex: number) => {
-    Metadata.for(target).with(propertyKey).set(MetaKey.ParamTypes, {
-      index: parameterIndex,
-      name: 'context',
-    })
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(MetaKey.ParamTypes, {
+        index: parameterIndex,
+        name: 'context',
+        /* c8 ignore next */
+        type: () => GraphQLObjectType,
+      })
   }
 }
 
@@ -64,6 +74,7 @@ export function Parent(type?: Function) {
       .set(MetaKey.ParamTypes, {
         index: parameterIndex,
         name: 'parent',
+        /* c8 ignore next */
         type: () => type || paramTypes[parameterIndex],
       })
   }
