@@ -92,14 +92,18 @@
   "c8": {
     "reporter": [
       "text",
-      "html"
+      "html",
+      "lcov"
     ],
     "exclude": [
       "tests/**",
       "app/**",
       "bin/**",
       "database/**",
-      "config/**"
+      "config/**",
+      "start/**",
+      "adonisrc.ts",
+      "tsnode.esm.js"
     ]
   }
 }
