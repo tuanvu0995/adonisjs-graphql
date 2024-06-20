@@ -1,8 +1,11 @@
 import { test } from '@japa/runner'
 import { sendGraphqlRequest } from './utils.js'
 import { CREATE_USER, GET_USER, GET_USERS, UPDATE_USER } from '../queries/user.js'
+import testUtils from '@adonisjs/core/services/test_utils'
 
-test.group('Users', () => {
+test.group('Users', (group) => {
+  group.setup(() => testUtils.db().truncate())
+
   let userId: number
 
   test('create a new user', async ({ client }) => {
