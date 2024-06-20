@@ -31,6 +31,24 @@ query GetUser($id: ID!) {
 }
 `
 
+export const GET_USER_WITH_POSTS = `
+query GetUserWithPosts($id: ID!) {
+  user(id: $id) {
+    id
+    email
+    name
+    posts {
+      id
+      title
+      content
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+`
+
 export const GET_USERS = `
 query GetUsers($options: GetListOptions) {
   users(options: $options) {
