@@ -1,5 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext } from '@adonisjs/core/http'
+import logger from '@adonisjs/core/services/logger'
+
 import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from '../types.js'
 import { getPrameters, getPropretyType } from './helpers.js'
@@ -8,6 +10,7 @@ import { HydratedProperty, inspect } from '../inspect.js'
 import { createRelation } from './create_relation.js'
 import { createFieldResolver } from './create_field_resolver.js'
 import { createField } from './create_field.js'
+import { runMiddlewares } from './middleware.js'
 
 export default class Schema {
   static schema: any = {
@@ -185,6 +188,7 @@ export default class Schema {
 
     const fields = accepetedQueries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
+      const middlewares = query.get(MetaKey.Middleware)
 
       const internalArgNames = ['context']
 
@@ -204,9 +208,18 @@ export default class Schema {
         type: outputType,
         args,
         resolve: async (_: any, _args: any, context: HttpContext) => {
-          const resolver = await app.container.make(query.definition)
-          const parameters = getPrameters([...externalArgs, ...internalArgs], context, _args)
-          return resolver[options.resolve.name](...parameters)
+          try {
+            if (middlewares?.length) {
+              await runMiddlewares(middlewares, context)
+            }
+
+            const resolver = await app.container.make(query.definition)
+            const parameters = getPrameters([...externalArgs, ...internalArgs], context, _args)
+            return resolver[options.resolve.name](...parameters)
+          } catch (error) {
+            logger.error(error)
+            throw error
+          }
         },
       }
       return acc
