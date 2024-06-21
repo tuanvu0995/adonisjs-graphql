@@ -46,9 +46,6 @@ export default class Post extends BaseModel {
   @Property.belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
-  @manyToMany(() => Tag, {
-    pivotTable: 'post_tags',
-  })
   @Property.manyToMany(() => Tag, {
     pivotTable: 'post_tags',
   })
