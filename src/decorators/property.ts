@@ -138,6 +138,7 @@ Property.hasOne = function (type: () => any, options?: any): PropertyDecorator {
         utils.merge({
           ...options,
           relation: PropertyRelation.HasOne,
+          nullable: true,
           type,
         })
       )
