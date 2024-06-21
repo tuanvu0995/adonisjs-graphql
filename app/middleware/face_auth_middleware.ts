@@ -24,6 +24,7 @@ export default class FaceAuthMiddleware {
         email: 'johndoe@example.com',
       },
     }
+    console.log('FaceAuthMiddleware:', auth.user.id)
     return next()
   }
 }
