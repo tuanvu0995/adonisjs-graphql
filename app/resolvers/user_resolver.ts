@@ -9,6 +9,7 @@ import {
   Arg,
   Args,
   Context,
+  Middleware,
   Mutation,
   Parent,
   Property,
@@ -20,6 +21,8 @@ import { GetListOptions } from '../common/input_types.js'
 import { ID } from '../../src/scalars/index.js'
 import type { HttpContext } from '@adonisjs/core/http'
 import Profile, { UpdateProfileInput } from '../models/profile.js'
+import FaceAuthMiddleware from '../middleware/face_auth_middleware.js'
+import NopeMiddleware from '../middleware/nope_middleware.js'
 
 @inject()
 @Resolver(() => User)
@@ -54,6 +57,8 @@ export default class UserResolver {
   }
 
   @Mutation(() => User)
+  @Middleware(FaceAuthMiddleware)
+  @Middleware(NopeMiddleware)
   async updateUser(
     @Arg('id', { type: () => ID }) id: number,
     @Arg('input') input: UpdateUserInput,

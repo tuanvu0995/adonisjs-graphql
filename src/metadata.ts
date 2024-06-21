@@ -12,6 +12,7 @@ export enum MetaKey {
   Definition = 'Definition',
   Property = 'Property',
   PropertyResolver = 'PropertyResolver',
+  Middleware = 'Middleware',
   Query = 'Query',
   Mutation = 'Mutation',
   Subscription = 'Subscription',
