@@ -11,6 +11,8 @@ export class GraphqlCore {
   protected schema: GraphQLSchema | undefined
 
   protected pgHtml: string | undefined
+  protected wsServer: any
+  protected pubsub: any
 
   constructor(
     private options: GraphQLConfig,
@@ -18,7 +20,19 @@ export class GraphqlCore {
     private app: ApplicationService
   ) {}
 
+  getPubSub() {
+    if (!this.pubsub && this.options.subscriptionEnabled) {
+      throw new Error('PubSub is not initialized')
+    }
+    return this.pubsub
+  }
+
   async boot() {
+    /**
+     * Build the GraphQL schema
+     */
+    await this.buildSchema()
+
     /**
      * Register graphql request handler
      */
@@ -33,7 +47,36 @@ export class GraphqlCore {
       router.get(this.options.graphqlPath, this.handlePlayground.bind(this))
     }
 
-    this.buildSchema()
+    /**
+     * Enable subscriptions server
+     */
+    if (this.options?.subscriptionEnabled) {
+      if (!this.options.withPubSub) {
+        throw new Error('Missing "withPubSub" method to enable subscriptions')
+      }
+      this.app.ready(async () => {
+        if (!this.options.withServer) {
+          throw new Error('Missing "withServer" method to enable subscriptions')
+        }
+        this.wsServer = await this.options.withServer(this.app, this.schema!)
+        this.logger.info('[GraphQL] Subscriptions are enabled')
+      })
+    }
+
+    if (this.options?.subscriptionEnabled && this.options.withPubSub) {
+      this.pubsub = await this.options.withPubSub(this.app)
+    }
+  }
+
+  async ready() {
+    this.logger.info(`[GraphQL] server is up and running on path ${this.options.graphqlPath}`)
+  }
+
+  async shutdown() {
+    if (this.wsServer) {
+      this.logger.info('[GraphQL] Closing subscriptions server')
+      this.wsServer.dispose()
+    }
   }
 
   async buildSchema() {
@@ -55,10 +98,6 @@ export class GraphqlCore {
     )
 
     return definitions
-  }
-
-  async ready() {
-    this.logger.info(`[GraphQL] server is up and running on path ${this.options.graphqlPath}`)
   }
 
   private async handleRequest(ctx: HttpContext) {

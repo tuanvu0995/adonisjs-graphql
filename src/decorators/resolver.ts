@@ -23,3 +23,19 @@ export function Mutation(returnType: Function): MethodDecorator {
     })
   }
 }
+
+type SubscriptionOptions = {
+  topics: string[]
+  nullable?: boolean
+}
+export function Subscription(returnType: Function, options: SubscriptionOptions): MethodDecorator {
+  return (target: object, propertyKey: string | symbol) => {
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(MetaKey.Subscription, {
+        type: returnType,
+        nullable: options.nullable || false,
+        topics: options.topics,
+      })
+  }
+}

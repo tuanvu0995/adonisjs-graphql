@@ -46,9 +46,9 @@ class InspectedDefinition {
     return this.getProperties(MetaKey.Mutation)
   }
 
-  // get subscriptionProperties(): HydratedProperty[] {
-  //   return this.getProperties(MetaKey.Subscription)
-  // }
+  get subscriptionProperties(): HydratedProperty[] {
+    return this.getProperties(MetaKey.Subscription)
+  }
 
   get inputProperties(): HydratedProperty[] {
     return this.getProperties(MetaKey.Property)
