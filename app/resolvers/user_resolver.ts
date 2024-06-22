@@ -24,20 +24,10 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Profile, { UpdateProfileInput } from '../models/profile.js'
 import FaceAuthMiddleware from '../middleware/face_auth_middleware.js'
 import NopeMiddleware from '../middleware/nope_middleware.js'
-import pubsub from '../../src/services/pubsub/main.js'
 
 @inject()
 @Resolver(() => User)
 export default class UserResolver {
-  constructor() {
-    let count = 0
-    setInterval(() => {
-      console.log('Publishing user created')
-      count++
-      pubsub.publish('USER_CREATED', 'User created: ' + count)
-    }, 1000)
-  }
-
   @Query(() => UserPagination)
   async users(
     @Arg('options', { type: () => GetListOptions, nullable: true }) options: GetListOptions
@@ -110,8 +100,9 @@ export default class UserResolver {
     nullable: true,
     topics: ['USER_CREATED'],
   })
-  async userCreated(payload: any, variables: any) {
-    console.log('payload', payload, variables)
+  async userCreated(payload: any, _variables: any) {
+    // filter payload based on variables
+
     return payload
   }
 }
