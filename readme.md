@@ -105,8 +105,8 @@ If you like what you see, star us on GitHub.
 |   ✅   | **Query and Mutation** | 2 / 2 | Jun 2024 |
 |   ✅   | **Relationship**       | 4 / 5 | Jun 2024 |
 |   ✅   | **Middleware**         | 1 / 1 | Jun 2024 |
-|   🚀   | **Subscription**       | 0 / 1 | Jul 2024 |
-|   😃   | **Dataloader**         | 0 / 1 | Jul 2024 |
+|   ✅   | **Subscription**       | 1 / 1 | Jul 2024 |
+|   🚀   | **Dataloader**         | 0 / 1 | Jul 2024 |
 |   😃   | **Directives**         | 0 / 1 | Aug 2024 |
 |   😃   | **Extensions**         | 0 / 1 | Aug 2024 |
 |   😃   | **Great Playground**   | 0 / 1 | Aug 2024 |
