@@ -1,16 +1,13 @@
-import app from '@adonisjs/core/services/app'
-import { HttpContext } from '@adonisjs/core/http'
-import logger from '@adonisjs/core/services/logger'
-
 import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from '../types.js'
-import { getPrameters, getPropretyType } from './helpers.js'
+import { getPropretyType } from './helpers.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { HydratedProperty, inspect } from '../inspect.js'
 import { createRelation } from './create_relation.js'
 import { createFieldResolver } from './create_field_resolver.js'
 import { createField } from './create_field.js'
-import { runMiddlewares } from './middleware.js'
+import { createResolver } from './create_resolver.js'
+import pubsub from '../services/pubsub/main.js'
 
 export default class Schema {
   static schema: any = {
@@ -67,11 +64,11 @@ export default class Schema {
         this.schema.mutation = { ...this.schema.mutation, ...mutation }
       }
 
-      // const subscriptions = inspect(definition).subscriptionProperties
-      // const subscription = this.buildQuery(subscriptions, MetaKey.Subscription)
-      // if (subscription) {
-      //   this.schema.subscription = { ...this.schema.subscription, ...subscription }
-      // }
+      const subscriptions = inspect(definition).subscriptionProperties
+      const subscription = this.buildQuery(subscriptions, MetaKey.Subscription)
+      if (subscription) {
+        this.schema.subscription = { ...this.schema.subscription, ...subscription }
+      }
     }
 
     return this.buildSchema(this.schema)
@@ -203,25 +200,27 @@ export default class Schema {
       }, {})
 
       const outputType = this.getOrCreateType(options)
-
-      acc[query.name] = {
+      const object: any = {
         type: outputType,
         args,
-        resolve: async (_: any, _args: any, context: HttpContext) => {
-          try {
-            if (middlewares?.length) {
-              await runMiddlewares(middlewares, context)
-            }
-
-            const resolver = await app.container.make(query.definition)
-            const parameters = getPrameters([...externalArgs, ...internalArgs], context, _args)
-            return resolver[options.resolve.name](...parameters)
-          } catch (error) {
-            logger.error(error)
-            throw error
-          }
-        },
       }
+
+      if (metaKey === MetaKey.Subscription) {
+        object.subscribe = () => pubsub.asyncIterator(options.topics!)
+        object.resolve = async (payload: any, variables: any) => {
+          return await options.resolve(payload, variables)
+        }
+      } else {
+        object.resolve = createResolver({
+          query,
+          options,
+          externalArgs,
+          internalArgs,
+          middlewares,
+        })
+      }
+      acc[query.name] = object
+
       return acc
     }, {})
     return fields

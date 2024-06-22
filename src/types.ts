@@ -1,3 +1,6 @@
+import { ApplicationService } from '@adonisjs/core/types'
+import { GraphQLSchema } from 'graphql'
+
 export type TargetClass = any
 export type MetaValue = any
 
@@ -20,6 +23,9 @@ export enum Nullable {
 export type GraphQLConfig = {
   graphqlPath: string
   playground: boolean
+  subscriptionEnabled?: boolean
+  withServer?: (app: ApplicationService, schema: GraphQLSchema) => Promise<any>
+  withPubSub?: (app: ApplicationService) => Promise<any>
 }
 
 /**
@@ -44,6 +50,7 @@ export type PropertyMetaOptions = CommonMetaOptions & {
 export type QueryMetaOptions = CommonMetaOptions & {
   args?: any
   resolve: (...args: any[]) => Promise<any>
+  topics?: string[]
 }
 
 export type ArgMetaOptions = CommonMetaOptions & {
