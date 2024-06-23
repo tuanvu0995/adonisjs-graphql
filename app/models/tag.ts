@@ -3,7 +3,6 @@ import { BaseModel, manyToMany } from '@adonisjs/lucid/orm'
 import type { ManyToMany } from '@adonisjs/lucid/types/relations'
 import Post from './post.js'
 import { InputType, Property } from '../../src/decorators/index.js'
-import { ID } from '../../src/scalars/index.js'
 
 @InputType()
 export class CreateTagInput {

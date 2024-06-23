@@ -2,7 +2,6 @@ import { DateTime } from 'luxon'
 import { BaseModel } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { InputType, Property } from '../../src/decorators/index.js'
-import { ID } from '../../src/scalars/index.js'
 import User from './user.js'
 
 @InputType()

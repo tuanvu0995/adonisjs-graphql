@@ -4,7 +4,7 @@ import type { BelongsTo, ManyToMany } from '@adonisjs/lucid/types/relations'
 import User from './user.js'
 import Tag from './tag.js'
 import { InputType, Property } from '../../src/decorators/index.js'
-import { ID, String } from '../../src/scalars/index.js'
+import { String } from '../../src/scalars/index.js'
 
 @InputType()
 export class CreatePostInput {
