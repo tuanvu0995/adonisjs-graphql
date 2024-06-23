@@ -7,21 +7,21 @@ import User from './user.js'
 
 @InputType()
 export class UpdateProfileInput {
-  @Property({ type: () => ID })
+  @Property.id()
   declare userId: string
 
   @Property()
   declare firstName: string
 
-  @Property({ type: () => ID })
+  @Property.id()
   declare lastName: string
 }
 
 export default class Profile extends BaseModel {
-  @Property({ isPrimary: true, type: () => ID })
+  @Property.id({ isPrimary: true })
   declare id: number
 
-  @Property({ type: () => ID })
+  @Property.id()
   declare userId: string
 
   @Property()

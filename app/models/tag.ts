@@ -18,7 +18,7 @@ export class CreateTagInput {
 }
 
 export default class Tag extends BaseModel {
-  @Property({ isPrimary: true, type: () => ID })
+  @Property({ isPrimary: true })
   declare id: number
 
   @Property()
@@ -27,7 +27,7 @@ export default class Tag extends BaseModel {
   @Property()
   declare slug: string
 
-  @Property()
+  @Property({ nullable: true })
   declare description?: string
 
   @Property.dateTime({ autoCreate: true })

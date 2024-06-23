@@ -20,7 +20,7 @@ const graphqlConfig = defineConfig({
   /**
    * Enable subscriptions
    */
-  subscriptionEnabled: true,
+  subscriptionEnabled: env.get('NODE_ENV') !== 'test',
 
   /**
    * Define the WS server for subscriptions
@@ -30,13 +30,6 @@ const graphqlConfig = defineConfig({
     const wsServer = new WebSocketServer({
       server: server.getNodeServer(),
       path: '/graphql',
-    })
-    wsServer.on('connection', (connect) => {
-      console.log('WS connected')
-
-      connect.on('close', (message) => {
-        console.log('WS closed', message)
-      })
     })
     return useServer({ schema }, wsServer)
   },

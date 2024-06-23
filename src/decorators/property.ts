@@ -1,4 +1,4 @@
-import { GraphQLString } from 'graphql'
+import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString } from 'graphql'
 import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
 import { ColumnOptions } from '@adonisjs/lucid/types/model'
 import stringHelpers from '@adonisjs/core/helpers/string'
@@ -6,10 +6,9 @@ import stringHelpers from '@adonisjs/core/helpers/string'
 import * as utils from '../utils.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { Nullable, PropertyRelation } from '../types.js'
-import { DateTimeScalar } from '../scalars/index.js'
+import { DateTimeScalar, ID } from '../scalars/index.js'
 
 export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | 'serializeAs'> & {
-  type?: () => any
   nullable?: boolean | Nullable
   columnName?: string
   serializeAs?: string | null
@@ -22,9 +21,11 @@ export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | '
  * @summary Decorator for defining a GraphQL property using Lucid ORM
  * @param options - Options for the property
  */
-function Property(options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+function Property(
+  typeFunc?: Function | PropertyOptions,
+  propetyOptions?: PropertyOptions
+): PropertyDecorator & MethodDecorator {
   const defaultOptions: PropertyOptions = {
-    type: () => GraphQLString,
     nullable: false,
     isPrimary: false,
     serializeAs: 'column',
@@ -34,11 +35,16 @@ function Property(options?: PropertyOptions): PropertyDecorator & MethodDecorato
     /**
      * Lucid ORM column decorator
      */
+
+    const type = typeof typeFunc === 'function' ? typeFunc : () => GraphQLString
+    const options = typeof typeFunc === 'object' ? typeFunc : propetyOptions
+
     if (target instanceof BaseModel) {
       column({
-        ...options,
+        ...(options || {}),
+        type,
         columnName: stringHelpers.snakeCase(propertyKey as string) as string,
-      })(target, propertyKey)
+      } as any)(target, propertyKey)
     }
 
     /**
@@ -46,8 +52,34 @@ function Property(options?: PropertyOptions): PropertyDecorator & MethodDecorato
      */
     Metadata.for(target)
       .with(propertyKey)
-      .set(MetaKey.Property, utils.merge(defaultOptions, options))
+      .set(
+        MetaKey.Property,
+        utils.merge(defaultOptions, {
+          ...(options || {}),
+          type,
+        })
+      )
   }
+}
+
+Property.int = function (options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+  return Property(() => GraphQLInt, options)
+}
+
+Property.string = function (options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+  return Property(() => GraphQLString, options)
+}
+
+Property.boolean = function (options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+  return Property(() => GraphQLBoolean, options)
+}
+
+Property.float = function (options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+  return Property(() => GraphQLFloat, options)
+}
+
+Property.id = function (options?: PropertyOptions): PropertyDecorator & MethodDecorator {
+  return Property(() => ID, options)
 }
 
 export type DateTimePropertyOptions = PropertyOptions & {
@@ -63,7 +95,6 @@ Property.dateTime = function (
   options?: DateTimePropertyOptions
 ): PropertyDecorator & MethodDecorator {
   const defaultOptions: PropertyOptions = {
-    type: () => DateTimeScalar,
     nullable: false,
     isPrimary: false,
     serializeAs: 'column',
@@ -75,9 +106,10 @@ Property.dateTime = function (
      */
     if (target instanceof BaseModel) {
       column.dateTime({
-        ...options,
+        ...(options || {}),
+        type: () => DateTimeScalar,
         columnName: stringHelpers.snakeCase(propertyKey as string) as string,
-      })(target as object, propertyKey as string)
+      } as any)(target as object, propertyKey as string)
     }
 
     /**
@@ -85,7 +117,13 @@ Property.dateTime = function (
      */
     Metadata.for(target)
       .with(propertyKey)
-      .set(MetaKey.Property, utils.merge(defaultOptions, options))
+      .set(
+        MetaKey.Property,
+        utils.merge(defaultOptions, {
+          ...(options || {}),
+          type: () => DateTimeScalar,
+        })
+      )
   }
 }
 

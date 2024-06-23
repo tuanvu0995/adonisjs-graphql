@@ -30,7 +30,6 @@ export function getInputType(arg: {
         return Schema.getType(inputType.__name__ || inputType.name)
     }
   }
-
   const type = arg.type()
 
   if (Array.isArray(type)) {

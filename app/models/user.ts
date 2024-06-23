@@ -49,13 +49,6 @@ export class UpdateUserInput {
   @Property({ nullable: true })
   declare password: string
 }
-export class UserPagination {
-  @Property({ type: () => PaginationMetadata })
-  declare meta: PaginationMetadata
-
-  @Property({ type: () => [User] })
-  declare data: User[]
-}
 
 @InputType()
 export class GetUserByEmailInput {
@@ -64,9 +57,8 @@ export class GetUserByEmailInput {
 }
 
 export default class User extends BaseModel {
-  @Property({
+  @Property.id({
     isPrimary: true,
-    type: () => ID,
   })
   declare id: number
 
@@ -85,7 +77,7 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   declare password: string
 
-  @Property({ type: () => AccountStatus })
+  @Property(() => AccountStatus)
   declare status: AccountStatus
 
   @Property.dateTime({ autoCreate: true })
@@ -108,4 +100,12 @@ export default class User extends BaseModel {
       user.password = await hash.make(user.password)
     }
   }
+}
+
+export class UserPagination {
+  @Property(() => PaginationMetadata)
+  declare meta: PaginationMetadata
+
+  @Property(() => [User])
+  declare data: User[]
 }

@@ -1,16 +1,15 @@
 import { Property } from '../../src/decorators/property.js'
-import { Int } from '../../src/scalars/index.js'
 
 export class PaginationMetadata {
-  @Property({ type: () => Int })
+  @Property.int()
   declare total: number
 
-  @Property({ type: () => Int })
+  @Property.int()
   declare perPage: number
 
-  @Property({ type: () => Int })
+  @Property.int()
   declare currentPage: number
 
-  @Property({ type: () => Int })
+  @Property.int()
   declare lastPage: number
 }

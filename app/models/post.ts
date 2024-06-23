@@ -14,18 +14,18 @@ export class CreatePostInput {
   @Property()
   declare content: string
 
-  @Property({ type: () => ID })
+  @Property.id()
   declare userId: string
 
-  @Property({ type: () => [String], nullable: true })
+  @Property(() => [String], { nullable: true })
   declare tags?: string[]
 }
 
 export default class Post extends BaseModel {
-  @Property({ isPrimary: true, type: () => ID })
+  @Property.id({ isPrimary: true })
   declare id: number
 
-  @Property({ type: () => ID })
+  @Property.id()
   declare userId: number
 
   @Property()
