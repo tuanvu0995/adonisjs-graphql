@@ -38,6 +38,6 @@ export default class Tag extends BaseModel {
   @manyToMany(() => Post, {
     pivotTable: 'post_tag',
   })
-  @Property.manyToMany(() => [Post])
+  @Property.manyToMany(() => Post)
   declare posts: ManyToMany<typeof Post>
 }

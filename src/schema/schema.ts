@@ -1,4 +1,10 @@
-import { GraphQLInputObjectType, GraphQLNamedType, GraphQLObjectType, GraphQLSchema } from 'graphql'
+import {
+  GraphQLInputObjectType,
+  GraphQLInterfaceType,
+  GraphQLNamedType,
+  GraphQLObjectType,
+  GraphQLSchema,
+} from 'graphql'
 import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from '../types.js'
 import { getPropretyType } from './helpers.js'
 import Metadata, { MetaKey } from '../metadata.js'
@@ -8,6 +14,7 @@ import { createFieldResolver } from './create_field_resolver.js'
 import { createField } from './create_field.js'
 import { createResolver } from './create_resolver.js'
 import pubsub from '../services/pubsub/main.js'
+import { DefinitionOptions } from '../decorators/definition.js'
 
 export default class Schema {
   static schema: any = {
@@ -132,9 +139,8 @@ export default class Schema {
 
   protected static buildTypes(definition: any) {
     const properties = inspect(definition).getProperties(MetaKey.Property)
-    if (!Array.isArray(properties) || properties.length === 0) {
-      return null
-    }
+    if (properties.length === 0) return null
+
     const fields = () => {
       return properties.reduce((acc: Record<string, any>, property: HydratedProperty) => {
         const options: PropertyMetaOptions = property.get(MetaKey.Property)
@@ -165,15 +171,20 @@ export default class Schema {
       }, {})
     }
 
-    const options = Metadata.for(definition).get(MetaKey.Definition)
+    const options = Metadata.for(definition).get(MetaKey.Definition) as DefinitionOptions
     const typeOptions = {
       name: definition.name,
       fields,
+      interfaces: [],
       description: options?.description,
     }
-    return options?.isInputType
-      ? new GraphQLInputObjectType(typeOptions)
-      : new GraphQLObjectType(typeOptions)
+    if (options?.isInterfaceType) {
+      return new GraphQLInterfaceType(typeOptions)
+    }
+    if (options?.isInputType) {
+      return new GraphQLInputObjectType(typeOptions)
+    }
+    return new GraphQLObjectType(typeOptions)
   }
 
   private static buildQuery(queries: HydratedProperty[], metaKey: MetaKey = MetaKey.Query) {

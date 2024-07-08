@@ -4,7 +4,10 @@ import { TargetClass } from '../types.js'
 export type DefinitionOptions = {
   isInputType?: boolean
   isArgType?: boolean
+  isInterfaceType?: boolean
   description?: string
+  implements?: any
+  extends?: any
 }
 
 export type Definition = new (...args: any[]) => any
@@ -42,6 +45,21 @@ type InputTypeOptions = {
  */
 export function InputType(options?: InputTypeOptions): ClassDecorator {
   return (target: any) => {
-    Definition({ ...options, isInputType: true })(target)
+    Metadata.for(target).set(MetaKey.Definition, {
+      ...options,
+      isInputType: true,
+    })
+  }
+}
+
+type InterfaceTypeOptions = {
+  description?: string
+}
+export function InterfaceType(options?: InterfaceTypeOptions): ClassDecorator {
+  return (target: any) => {
+    Metadata.for(target).set(MetaKey.Definition, {
+      ...options,
+      isInterfaceType: true,
+    })
   }
 }

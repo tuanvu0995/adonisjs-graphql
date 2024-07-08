@@ -19,12 +19,15 @@ export enum MetaKey {
 }
 
 export default class Metadata {
+  private static definitions: Record<string, any> = {}
+
   static getPropertiesByModel(
     target: TargetClass,
     metaKey: MetaKey
   ): { [property: string]: MetaValue } {
     const result: Record<string, any> = {}
-    for (const property of Object.keys(util.defaultTo(target[METADATA], []))) {
+    const constructor = this.getConstructor(target)
+    for (const property of Object.keys(util.defaultTo(constructor[METADATA], []))) {
       const value = this.getMetaValue(target, metaKey, property)
       if (util.isNil(value)) continue
       result[property] = value
@@ -33,7 +36,7 @@ export default class Metadata {
   }
 
   static getProperties(target: TargetClass): { [property: string]: MetaValue } {
-    return target[METADATA]
+    return this.getConstructor(target)?.[METADATA] || {}
   }
 
   static for(target: TargetClass) {
@@ -61,7 +64,11 @@ export default class Metadata {
   }
 
   private static getConstructor(target: TargetClass) {
-    return typeof target === 'function' ? target : target.constructor
+    const name = typeof target === 'function' ? target.name : target.constructor.name
+    if (!this.definitions[name]) {
+      this.definitions[name] = {}
+    }
+    return this.definitions[name]
   }
 
   private static getMetaValue(
@@ -70,7 +77,7 @@ export default class Metadata {
     property: string | symbol
   ): MetaValue {
     if (!this.getConstructor(target)?.[METADATA]?.[property]) return
-    return this.getConstructor(target)[METADATA]?.[property]?.[metaKey]
+    return this.getConstructor(target)?.[METADATA]?.[property]?.[metaKey]
   }
 
   private static exists(target: TargetClass): boolean {
@@ -108,6 +115,10 @@ export default class Metadata {
       return
     }
 
-    constructor[METADATA][property][metaKey] = value
+    if (!constructor[METADATA][property][metaKey]) {
+      constructor[METADATA][property][metaKey] = Array.isArray(value) ? [] : {}
+    }
+
+    constructor[METADATA][property][metaKey] = Array.isArray(value) ? [...value] : { ...value }
   }
 }

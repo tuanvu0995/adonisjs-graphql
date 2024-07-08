@@ -5,6 +5,7 @@ import User from './user.js'
 import Tag from './tag.js'
 import { InputType, Property } from '../../src/decorators/index.js'
 import { String } from '../../src/scalars/index.js'
+import { PaginationData, PaginationMetadata } from '../common/object_types.js'
 
 @InputType()
 export class CreatePostInput {
@@ -50,4 +51,12 @@ export default class Post extends BaseModel {
     pivotTable: 'post_tags',
   })
   declare tags: ManyToMany<typeof Tag>
+}
+
+export class PostPagination extends PaginationData {
+  @Property(() => PaginationMetadata)
+  declare meta: PaginationMetadata
+
+  @Property(() => [Post])
+  declare data: Post[]
 }

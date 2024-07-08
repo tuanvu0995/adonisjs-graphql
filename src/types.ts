@@ -44,6 +44,9 @@ export type PropertyMetaOptions = CommonMetaOptions & {
   relation?: PropertyRelation
   nullable?: boolean | Nullable
   isResolver?: boolean
+  isInterfaceType?: boolean
+  isInputType?: boolean
+  isArgType?: boolean
   definition?: any
 }
 

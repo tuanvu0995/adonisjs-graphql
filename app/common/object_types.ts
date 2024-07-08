@@ -13,3 +13,8 @@ export class PaginationMetadata {
   @Property.int()
   declare lastPage: number
 }
+
+export class PaginationData {
+  @Property(() => PaginationMetadata)
+  declare meta: PaginationMetadata
+}
