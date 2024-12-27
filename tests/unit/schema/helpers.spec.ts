@@ -2,8 +2,8 @@ import { test } from '@japa/runner'
 import {
   createListType,
   getInputType,
-  getPropretyType,
-  getPrameters,
+  getPropertyType,
+  getParameters,
 } from '../../../src/schema/helpers.js'
 import { GraphQLList, GraphQLString } from 'graphql'
 import { Int } from '../../../src/scalars/index.js'
@@ -43,9 +43,9 @@ test.group('Helpers: getInputType', () => {
   })
 })
 
-test.group('Helpers: getPropretyType', () => {
+test.group('Helpers: getPropertyType', () => {
   test('return a NamedType', async ({ assert }) => {
-    const type: any = getPropretyType({
+    const type: any = getPropertyType({
       name: 'email',
       type: () => ({ name: 'String' }),
     })
@@ -53,7 +53,7 @@ test.group('Helpers: getPropretyType', () => {
   })
 
   test("return null if the type isn't found", async ({ assert }) => {
-    const type: any = getPropretyType({
+    const type: any = getPropertyType({
       name: 'email',
       type: () => ({ name: 'Unknown' }),
     })
@@ -61,7 +61,7 @@ test.group('Helpers: getPropretyType', () => {
   })
 })
 
-test.group('Helpers: getPrameters', () => {
+test.group('Helpers: getParameters', () => {
   test('return a list of parameters', async ({ assert }) => {
     const context = {} as HttpContext
     const args = {
@@ -90,7 +90,7 @@ test.group('Helpers: getPrameters', () => {
         type: () => String,
       },
     ]
-    const res = getPrameters(parameters, context, args)
+    const res = getParameters(parameters, context, args)
     assert.deepEqual(res, [10, 1, {}, undefined])
   })
 })
