@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { runMiddlewares } from './middleware.js'
-import { getPrameters } from './helpers.js'
+import { getParameters } from './helpers.js'
 import logger from '@adonisjs/core/services/logger'
 import app from '@adonisjs/core/services/app'
 import { HydratedProperty } from '../inspect.js'
@@ -26,7 +26,7 @@ export function createResolver({
       }
 
       const resolver = await app.container.make(query.definition)
-      const parameters = getPrameters([...externalArgs, ...internalArgs], context, _args)
+      const parameters = await getParameters([...externalArgs, ...internalArgs], context, _args)
       return resolver[options.resolve.name](...parameters)
     } catch (error) {
       logger.error(error)

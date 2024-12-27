@@ -2,10 +2,16 @@ import fs from 'node:fs/promises'
 import { GraphQLSchema, graphql } from 'graphql'
 import type { HttpContext } from '@adonisjs/core/http'
 import { ApplicationService, LoggerService } from '@adonisjs/core/types'
-import { GraphQLConfig } from './types.js'
-import Schema from './schema/schema.js'
+import { GraphQLConfig, GraphQLContext } from './types.js'
+import { Schema } from './schema/schema.js'
 import * as utils from './utils.js'
-import { DateTimeScalar } from './scalars/index.js'
+import { DateTimeScalar } from './scalars/datetime.js'
+
+export type RegisteredFnName = 'createContext'
+
+export type RegisteredFn = {
+  createContext: (ctx: HttpContext) => Promise<GraphQLContext>
+}
 
 export class GraphqlCore {
   protected schema: GraphQLSchema | undefined
@@ -14,6 +20,10 @@ export class GraphqlCore {
   protected wsServer: any
   protected pubsub: any
 
+  registeredFn: RegisteredFn = {
+    createContext: (ctx: HttpContext) => Promise.resolve(ctx),
+  }
+
   constructor(
     private options: GraphQLConfig,
     private logger: LoggerService,
@@ -21,24 +31,28 @@ export class GraphqlCore {
   ) {}
 
   getPubSub() {
-    if (!this.pubsub && this.options.subscriptionEnabled) {
+    if (!this.pubsub && this.options?.subscriptionEnabled) {
       throw new Error('PubSub is not initialized')
     }
     return this.pubsub
   }
 
   async boot() {
+    if (this.app.getEnvironment() === 'console') {
+      return
+    }
+
+    Schema.init()
+
     /**
      * Build the GraphQL schema
      */
     await this.buildSchema()
-
     /**
      * Register graphql request handler
      */
     const router = await this.app.container.make('router')
     router.post(this.options.graphqlPath, this.handleRequest.bind(this))
-
     /**
      * Register graphql playground
      */
@@ -46,7 +60,6 @@ export class GraphqlCore {
       this.logger.info('[GraphQL] Playground is enabled')
       router.get(this.options.graphqlPath, this.handlePlayground.bind(this))
     }
-
     /**
      * Enable subscriptions server
      */
@@ -62,14 +75,13 @@ export class GraphqlCore {
         this.logger.info('[GraphQL] Subscriptions are enabled')
       })
     }
-
     if (this.options?.subscriptionEnabled && this.options.withPubSub) {
       this.pubsub = await this.options.withPubSub(this.app)
     }
   }
 
   async ready() {
-    this.logger.info(`[GraphQL] server is up and running on path ${this.options.graphqlPath}`)
+    this.logger.info(`[GraphQL] server is up and running on path ${this.options?.graphqlPath}`)
   }
 
   async shutdown() {
@@ -93,7 +105,14 @@ export class GraphqlCore {
       files.map(async (file) => await import(`${appPath}/${file}`))
     ).then((modules) =>
       modules
-        .map((module) => Object.values(module).filter((value) => utils.isConstructor(value)))
+        .map((module) => {
+          if (module.registerType) {
+            module.registerType()
+          }
+          return Object.values(module).filter(
+            (value) => value !== module.registerType && utils.isConstructor(value)
+          )
+        })
         .flat()
     )
 
@@ -112,7 +131,10 @@ export class GraphqlCore {
         // @ts-ignore
         DateTime: DateTimeScalar,
       },
-    }).catch((error) => console.error(error))
+    })
+    if (result.errors) {
+      console.error(result.errors)
+    }
     return ctx.response.json(result)
   }
 
@@ -122,5 +144,9 @@ export class GraphqlCore {
       this.pgHtml = await fs.readFile(providerPath, 'utf-8')
     }
     return ctx.response.type('html').send(this.pgHtml)
+  }
+
+  registerFn(name: RegisteredFnName, fn: any) {
+    this.registeredFn[name] = fn
   }
 }

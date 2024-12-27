@@ -6,7 +6,7 @@ import {
   GraphQLSchema,
 } from 'graphql'
 import { ArgMetaOptions, PropertyMetaOptions, QueryMetaOptions } from '../types.js'
-import { getPropretyType } from './helpers.js'
+import { getPropertyType } from './helpers.js'
 import Metadata, { MetaKey } from '../metadata.js'
 import { HydratedProperty, inspect } from '../inspect.js'
 import { createRelation } from './create_relation.js'
@@ -16,11 +16,19 @@ import { createResolver } from './create_resolver.js'
 import pubsub from '../services/pubsub/main.js'
 import { DefinitionOptions } from '../decorators/definition.js'
 
-export default class Schema {
+export class Schema {
   static schema: any = {
     query: null,
     mutation: null,
     types: [],
+  }
+
+  static init() {
+    this.schema = {
+      query: null,
+      mutation: null,
+      types: [],
+    }
   }
 
   static getType(name: string): GraphQLNamedType | undefined {
@@ -101,7 +109,7 @@ export default class Schema {
   }
 
   protected static getOrCreateType(options: PropertyMetaOptions) {
-    const type = getPropretyType(options)
+    const type = getPropertyType(options)
     if (type) return type
     const definition = options.type()
     return this.buildTypes(definition)
@@ -130,7 +138,7 @@ export default class Schema {
          * Set the parameters of the resolver as parameters of the property
          */
         const parameters = property.get(MetaKey.ParamTypes)
-        parameters.forEach((param: ArgMetaOptions) => {
+        parameters?.forEach((param: ArgMetaOptions) => {
           Metadata.for(ofType).with(property.name).set(MetaKey.ParamTypes, param)
         })
       }
@@ -189,12 +197,12 @@ export default class Schema {
 
   private static buildQuery(queries: HydratedProperty[], metaKey: MetaKey = MetaKey.Query) {
     if (!queries.length) return null
-    const accepetedQueries = queries.filter((query) => {
+    const acceptedQueries = queries.filter((query) => {
       const options = Metadata.for(query.definition).get(MetaKey.Definition)
       return options.isResolver
     })
 
-    const fields = accepetedQueries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
+    const fields = acceptedQueries.reduce((acc: Record<string, any>, query: HydratedProperty) => {
       const options: QueryMetaOptions = query.get(metaKey)
       const middlewares = query.get(MetaKey.Middleware)
 

@@ -1,7 +1,7 @@
 import { test } from '@japa/runner'
 
 import { GraphQLObjectType } from 'graphql'
-import Schema from '../../../src/schema/schema.js'
+import { Schema } from '../../../src/schema/schema.js'
 import { ID, String } from '../../../src/scalars/index.js'
 
 class ExtendedSchema extends Schema {

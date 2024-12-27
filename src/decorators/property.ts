@@ -1,5 +1,13 @@
 import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLString } from 'graphql'
-import { BaseModel, belongsTo, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  belongsTo,
+  column,
+  computed,
+  hasMany,
+  hasOne,
+  manyToMany,
+} from '@adonisjs/lucid/orm'
 import { ColumnOptions } from '@adonisjs/lucid/types/model'
 import stringHelpers from '@adonisjs/core/helpers/string'
 
@@ -23,7 +31,7 @@ export type PropertyOptions = Omit<ColumnOptions, 'isPrimary' | 'columnName' | '
  */
 function Property(
   typeFunc?: Function | PropertyOptions,
-  propetyOptions?: PropertyOptions
+  propertyOptions?: PropertyOptions
 ): PropertyDecorator & MethodDecorator {
   const defaultOptions: PropertyOptions = {
     nullable: false,
@@ -37,8 +45,7 @@ function Property(
      */
 
     const type = typeof typeFunc === 'function' ? typeFunc : () => GraphQLString
-    const options = typeof typeFunc === 'object' ? typeFunc : propetyOptions
-
+    const options = typeof typeFunc === 'object' ? typeFunc : propertyOptions
     if (target instanceof BaseModel) {
       column({
         ...(options || {}),
@@ -115,6 +122,27 @@ Property.dateTime = function (
     /**
      * Metadata for the property
      */
+    Metadata.for(target)
+      .with(propertyKey)
+      .set(
+        MetaKey.Property,
+        utils.merge(defaultOptions, {
+          ...(options || {}),
+          type: () => DateTimeScalar,
+        })
+      )
+  }
+}
+
+Property.computed = function (options?: PropertyOptions): PropertyDecorator {
+  const defaultOptions: PropertyOptions = {
+    nullable: false,
+    isPrimary: false,
+    serializeAs: 'column',
+    columnName: '',
+  }
+  return (target: object, propertyKey: string | symbol) => {
+    computed()(target as any, propertyKey as string)
     Metadata.for(target)
       .with(propertyKey)
       .set(
