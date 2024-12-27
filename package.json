@@ -22,7 +22,6 @@
     "./graphql": "./build/src/graphql.js"
   },
   "scripts": {
-    "dev": "node --import=./tsnode.esm.js --enable-source-maps bin/server.ts --watch",
     "clean": "del-cli build",
     "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
     "typecheck": "tsc --noEmit",

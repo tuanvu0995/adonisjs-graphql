@@ -12,8 +12,6 @@ import { ArgMetaOptions, PropertyMetaOptions } from '../types.js'
 import { Schema } from './schema.js'
 import app from '@adonisjs/core/services/app'
 
-const graphqlCore = await app.container.make('graphql')
-
 export function getInputType(arg: {
   type: () => any
 }): GraphQLNamedType | GraphQLNamedType[] | undefined {
@@ -55,14 +53,21 @@ export function createListType(type: GraphQLNamedType) {
   return new GraphQLList(type)
 }
 
-export function getParameters(parameters: ArgMetaOptions[], context: HttpContext, args: any = {}) {
+export async function getParameters(
+  parameters: ArgMetaOptions[],
+  context: HttpContext,
+  args: any = {}
+) {
   if (!parameters?.length) return []
   parameters.sort((a, b) => a.index - b.index)
-  const res = parameters.map((param: any) => {
-    if (param.name === 'context') {
-      return graphqlCore.registeredFn.createContext(context)
-    }
-    return args[param.name] || param.defaultValue || undefined
-  })
+  const res = await Promise.all(
+    parameters.map(async (param: any) => {
+      if (param.name === 'context') {
+        const graphqlCore = await app.container.make('graphql')
+        return graphqlCore.registeredFn.createContext(context)
+      }
+      return args[param.name] || param.defaultValue || undefined
+    })
+  )
   return res
 }
