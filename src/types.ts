@@ -1,3 +1,4 @@
+import { HttpContext } from '@adonisjs/core/http'
 import { ApplicationService } from '@adonisjs/core/types'
 import { GraphQLSchema } from 'graphql'
 
@@ -61,3 +62,7 @@ export type ArgMetaOptions = CommonMetaOptions & {
   nullable?: boolean | Nullable
   defaultValue?: any
 }
+
+export type Relation<T> = T
+
+export interface GraphQLContext extends HttpContext {}

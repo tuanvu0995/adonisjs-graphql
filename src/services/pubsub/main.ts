@@ -22,6 +22,9 @@ export declare class PubSub extends PubSubEngine {
 let pubsub: PubSub
 
 await app.booted(async () => {
+  if (app.getEnvironment() === 'console') {
+    return
+  }
   const graphqlCore = await app.container.make('graphql')
   pubsub = graphqlCore.getPubSub()
 })

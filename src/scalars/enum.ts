@@ -1,5 +1,5 @@
 import { GraphQLEnumType, GraphQLEnumValueConfigMap } from 'graphql'
-import Schema from '../schema/schema.js'
+import { Schema } from '../schema/schema.js'
 
 export function registerEnumType(
   enumObj: any,

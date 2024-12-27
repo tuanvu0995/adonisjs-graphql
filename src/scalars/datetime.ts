@@ -10,7 +10,7 @@ export const serialize = (value: any) => {
   if (value instanceof DateTime) {
     return value.toISO()
   }
-  throw Error('GraphQL Date Scalar serializer expected a `Date` object')
+  return value
 }
 
 export const DateTimeScalar = new GraphQLScalarType({
